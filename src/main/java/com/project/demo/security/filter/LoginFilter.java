@@ -1,7 +1,6 @@
 package com.project.demo.security.filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.project.demo.member.domain.Member;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.security.domain.CustomUserDetail;
@@ -10,8 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.springframework.data.redis.hash.ObjectHashMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +25,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @Slf4j
-public class AuthFilter extends UsernamePasswordAuthenticationFilter {
+public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
     private ObjectMapper objectMapper;
@@ -37,7 +34,7 @@ public class AuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private RedisUserInfoService redisUserInfoService;
 
-    public AuthFilter(AuthenticationManager authenticationManager,ObjectMapper objectMapper,JwtUtility jwtUtility,RedisUserInfoService redisUserInfoService) {
+    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtUtility jwtUtility, RedisUserInfoService redisUserInfoService) {
         this.authenticationManager=authenticationManager;
         setFilterProcessesUrl("/member/request/login");
         this.objectMapper=objectMapper;

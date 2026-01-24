@@ -46,7 +46,15 @@ public class RedisUserInfoService {
             redisTemplate.opsForValue().set(key, member);
         }
     }
+
+    public String getUserInfo(Long id){
+        return redisTemplate.opsForValue().get(userInfoKey+id);
+    }
+
     public void saveRefreshToken(Long memberId,String refreshToken){
         redisTemplate.opsForValue().set(userRefreshTokenKey+memberId,refreshToken,30,TimeUnit.DAYS);
+    }
+    public Boolean existRefreshToken(Long memberId){
+        return  redisTemplate.opsForValue().get(userRefreshTokenKey+memberId)!=null;
     }
 }

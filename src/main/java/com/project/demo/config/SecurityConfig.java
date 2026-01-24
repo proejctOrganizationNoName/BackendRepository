@@ -4,7 +4,8 @@ package com.project.demo.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.demo.member.repository.MemberRepositoryImpl;
 import com.project.demo.redis.RedisUserInfoService;
-import com.project.demo.security.filter.AuthFilter;
+import com.project.demo.security.filter.JwtAuthFilter;
+import com.project.demo.security.filter.LoginFilter;
 import com.project.demo.security.handler.CustomLogOutHandler;
 import com.project.demo.security.handler.CustomOauth2LoginFailer;
 import com.project.demo.security.handler.CustomOauth2LoginSuccesser;
@@ -53,8 +54,12 @@ public class SecurityConfig {
 
         security.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        security.addFilterBefore(new AuthFilter(authenticationManager(),objectMapper,
+        security.addFilterBefore(new LoginFilter(authenticationManager(),objectMapper,
                 jwtUtility,redisUserInfoService), UsernamePasswordAuthenticationFilter.class);
+
+        security.addFilterAfter(new JwtAuthFilter(redisUserInfoService,jwtUtility,memberRepository,objectMapper)
+        , UsernamePasswordAuthenticationFilter.class);
+
 
         security.logout(logout->logout.logoutUrl("/member/logout")
                 .invalidateHttpSession(true)

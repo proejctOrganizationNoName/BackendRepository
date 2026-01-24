@@ -24,6 +24,11 @@ public class MemberRepositoryImpl {
         return true;
     }
 
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
+    }
+
+
     public Optional<Member> findByEmail(String email){
         return memberRepository.findByEmail(email);
     }

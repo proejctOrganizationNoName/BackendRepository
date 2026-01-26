@@ -1,6 +1,7 @@
 package com.project.demo.member.domain;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ public record RequestDtos() {
 
     @Getter
     @NoArgsConstructor
-    public class RequestChangeMemberInfo{
+    public static class RequestChangeMemberInfo{
         @NotNull(message = "바꿀려는 회원정보의 카테고리를 넣어주세요")
         private MemberProperty memberProperty;
 
@@ -26,7 +27,7 @@ public record RequestDtos() {
 
     @Getter
     @NoArgsConstructor
-    public class RequestMemberSignIn{
+    public static class RequestMemberSignIn{
 
         @NotNull(message = "회원가입시 이메일은 필수값입니다")
         private String email;

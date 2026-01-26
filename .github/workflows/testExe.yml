@@ -1,4 +1,4 @@
-name: moiraBackEndTest
+name: projectBackEndTest
 
 on:
   pull_request:

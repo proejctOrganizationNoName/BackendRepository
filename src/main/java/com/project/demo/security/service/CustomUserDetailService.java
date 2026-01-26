@@ -1,10 +1,8 @@
 package com.project.demo.security.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.demo.member.Service.MemberService;
 import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberType;
-import com.project.demo.member.repository.MemberRepositoryImpl;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.security.domain.CustomUserDetail;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,10 +14,10 @@ import java.util.Optional;
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
-    private MemberRepositoryImpl memberRepository;
+    private MemberRepositoryAdvance memberRepository;
 
 
-    public CustomUserDetailService(MemberRepositoryImpl memberRepository) {
+    public CustomUserDetailService(MemberRepositoryAdvance memberRepository) {
         this.memberRepository=memberRepository;
     }
 

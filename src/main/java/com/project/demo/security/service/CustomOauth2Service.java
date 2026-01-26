@@ -2,13 +2,12 @@ package com.project.demo.security.service;
 
 import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberType;
-import com.project.demo.member.repository.MemberRepositoryImpl;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.security.domain.CustomOAuth2User;
 import com.project.demo.security.domain.GoogleResponse;
 import com.project.demo.security.domain.OAuth2Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -24,9 +23,9 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
 
     @Value("${spring.user.imgurl}")
     private String basicImgUrl;
-    private MemberRepositoryImpl memberRepository;
+    private MemberRepositoryAdvance memberRepository;
 
-    public CustomOauth2Service(MemberRepositoryImpl memberRepository) {
+    public CustomOauth2Service(MemberRepositoryAdvance memberRepository) {
         this.memberRepository = memberRepository;
     }
 

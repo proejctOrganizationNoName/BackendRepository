@@ -3,6 +3,7 @@ package com.project.demo.mail;
 import com.project.demo.IntegralTestEnv;
 import com.project.demo.mail.domain.EmailType;
 import com.project.demo.mail.utility.AuthMailSend;
+import com.project.demo.mail.utility.MailFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +14,22 @@ public class MailTest extends IntegralTestEnv {
 
 
 
-    @MockitoBean
-    AuthMailSend authMailSend;
 
+    @MockitoBean
+    MailFactory mailFactory;
     @Test
     @DisplayName("메일 전송 호출이되는가?")
     void checkMailCalltest(){
 
+        AuthMailSend authMailSend=Mockito.mock(AuthMailSend.class);
+
         Mockito.doNothing()
                 .when(authMailSend)
                 .sendMail(Mockito.any(String.class),Mockito.any(Object.class));
+        Mockito.when(mailFactory.supplyMailSend(EmailType.AUTH))
+                .thenReturn(authMailSend);
         mailService.sendAuthCode("test", EmailType.AUTH);
+
         Mockito.verify(authMailSend,Mockito.times(1))
                 .sendMail(Mockito.any(String.class),Mockito.any(Object.class));
     }

@@ -7,11 +7,15 @@ import com.project.demo.member.domain.MemberProperty;
 import com.project.demo.member.domain.RequestDtos;
 import com.project.demo.member.domain.RequestDtos.RequestChangeMemberInfo;
 import com.project.demo.member.domain.RequestDtos.RequestMemberSignIn;
+import com.project.demo.security.domain.CustomUserDetail;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class MemberTest extends IntegralTestEnv {
 
@@ -43,7 +47,7 @@ public class MemberTest extends IntegralTestEnv {
                 .password("test")
                 .build();
         memberService.signInMember(requestMemberSignIn);
-        Assertions.assertThat( memberRepository.findByEmail("test").isPresent()).isEqualTo(true);
+        Assertions.assertThat( memberRepositoryImpl.findByEmail("test").isPresent()).isEqualTo(true);
     }
 
     @Test
@@ -53,13 +57,20 @@ public class MemberTest extends IntegralTestEnv {
                 .memberProperty(MemberProperty.PASSWORD)
                 .value("testpassword")
                 .build();
+        CustomUserDetail customUserDetail = new CustomUserDetail(m1);
 
-        Mockito.when(securityMemberReadService.securityMemberRead())
-                        .thenReturn(m1);
+
+        org.springframework.security.core.Authentication authentication =
+                Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getPrincipal()).thenReturn(customUserDetail);
+
+        org.springframework.security.core.context.SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         memberService.changeMemberInfo(requestChangeMemberInfo);
 
-        Member m=memberRepository.findByEmail(m1.getEmail()).get();
+        Member m=memberRepositoryImpl.findByEmail(m1.getEmail()).get();
 
         Assertions.assertThat(passwordEncoder.matches("testpassword",m.getPassword()));
     }

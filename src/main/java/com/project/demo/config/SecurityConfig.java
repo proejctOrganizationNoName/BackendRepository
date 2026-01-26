@@ -2,7 +2,7 @@ package com.project.demo.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.demo.member.repository.MemberRepositoryImpl;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.security.filter.JwtAuthFilter;
 import com.project.demo.security.filter.LoginFilter;
@@ -29,7 +29,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final MemberRepositoryImpl memberRepository;
+    private final MemberRepositoryAdvance memberRepository;
     private final ObjectMapper objectMapper;
     private final RedisUserInfoService redisUserInfoService;
     private final JwtUtility jwtUtility;

@@ -2,9 +2,8 @@ package com.project.demo.security.filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.demo.member.Service.MemberService;
 import com.project.demo.member.domain.Member;
-import com.project.demo.member.repository.MemberRepositoryImpl;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.security.domain.CustomUserDetail;
 import com.project.demo.utility.jwt.JwtUtility;
@@ -20,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -29,7 +27,7 @@ import static com.project.demo.utility.jwt.TokenEnum.TOKEN_PREFIX;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
 
-    public JwtAuthFilter(RedisUserInfoService redisUserInfoService, JwtUtility jwtUtility,MemberRepositoryImpl memberRepository,ObjectMapper objectMapper) {
+    public JwtAuthFilter(RedisUserInfoService redisUserInfoService, JwtUtility jwtUtility, MemberRepositoryAdvance memberRepository, ObjectMapper objectMapper) {
         this.redisUserInfoService = redisUserInfoService;
         this.jwtUtility = jwtUtility;
         this.memberRepository=memberRepository;
@@ -38,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private RedisUserInfoService redisUserInfoService;
     private JwtUtility jwtUtility;
-    private MemberRepositoryImpl memberRepository;
+    private MemberRepositoryAdvance memberRepository;
 
     private ObjectMapper objectMapper;
 

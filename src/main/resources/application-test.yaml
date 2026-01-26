@@ -22,7 +22,16 @@ spring:
         jdbc:
           exception-handling: ignore
   mail:
-    username:
+    host: localhost
+    port: 2525
+    username: test-user
+    password: test-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   security:
     oauth2:
       client:
@@ -68,3 +77,6 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-info-authentication-method: header
             user-name-attribute: id # Kakao 응답 값 id, connected_at, properties, kakao_account 중 id 지정
+jwt:
+  issuer: test
+  secret-key: sfsdffssfsd

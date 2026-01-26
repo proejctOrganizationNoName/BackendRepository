@@ -7,9 +7,10 @@ import com.project.demo.member.Service.SecurityMemberReadService;
 import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberType;
 import com.project.demo.member.repository.MemberRepository;
-import com.project.demo.member.repository.MemberRepositoryImpl;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.utility.jwt.JwtUtility;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,7 @@ public class IntegralTestEnv {
 
 
     @Autowired
-    protected MemberRepositoryImpl memberRepository;
+    protected MemberRepositoryAdvance memberRepositoryImpl;
 
 
     @Autowired
@@ -43,6 +44,14 @@ public class IntegralTestEnv {
     @Autowired
     protected JwtUtility jwtUtility;
 
+    @Autowired
+    protected MemberRepository memberRepository;
+
+
+    @AfterEach
+    void cleanAfterTest(){
+        memberRepository.deleteAllInBatch();
+    }
 
     public Member createMember(Long idx){
         Member m=Member.builder()
@@ -53,7 +62,7 @@ public class IntegralTestEnv {
                 .password("test")
                 .build();
 
-        m=memberRepository.saveMember(m);
+        m=memberRepositoryImpl.saveMember(m);
 
         return m;
     }

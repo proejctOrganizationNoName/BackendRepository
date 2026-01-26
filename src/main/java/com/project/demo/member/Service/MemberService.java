@@ -3,19 +3,14 @@ package com.project.demo.member.Service;
 import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberProperty;
 import com.project.demo.member.domain.MemberType;
-import com.project.demo.member.domain.RequestDtos;
 import com.project.demo.member.domain.RequestDtos.RequestChangeMemberInfo;
 import com.project.demo.member.domain.RequestDtos.RequestMemberSignIn;
-import com.project.demo.member.repository.MemberRepositoryImpl;
-import com.project.demo.redis.RedisUserInfoService;
+import com.project.demo.member.repository.MemberRepositoryAdvance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -28,7 +23,7 @@ public class MemberService {
     @Value("${spring.user.imgurl}")
     private String basicImgUrl;
     private final SecurityMemberReadService securityMemberReadService;
-    private final MemberRepositoryImpl memberRepository;
+    private final MemberRepositoryAdvance memberRepository;
     private final PasswordEncoder passwordEncoder;
 
     public void checkMemberExist(String email){

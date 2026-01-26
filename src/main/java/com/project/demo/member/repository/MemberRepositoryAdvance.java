@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class MemberRepositoryImpl {
+public class MemberRepositoryAdvance {
 
     private final MemberRepository memberRepository;
 

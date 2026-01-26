@@ -4,7 +4,7 @@ public class RedisLuaScript {
 
 
     public final static String checkAuthKey="local authCode=redis.call(\"get\",KEYS[1])\n" +
-            "if certCode==nil or authCode~=ARGV[1] then\n" +
+            "if authCode==nil or authCode~=ARGV[1] then\n" +
             "    return 0 \n" +
             "else\n" +
             "    redis.call(\"del\",KEYS[1])\n" +

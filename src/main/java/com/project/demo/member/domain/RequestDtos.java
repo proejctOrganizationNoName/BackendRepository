@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public record RequestDtos() {
+public class RequestDtos {
 
     @Getter
     @NoArgsConstructor

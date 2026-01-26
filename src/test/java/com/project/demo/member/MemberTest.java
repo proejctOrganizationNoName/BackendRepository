@@ -40,12 +40,7 @@ public class MemberTest extends IntegralTestEnv {
     @DisplayName("회원가입 되는지 체크")
     void signInMemberTest(){
 
-        RequestMemberSignIn requestMemberSignIn=RequestMemberSignIn.builder()
-                .email("test")
-                .imgUrl("Test")
-                .nickName("est")
-                .password("test")
-                .build();
+        RequestMemberSignIn requestMemberSignIn=new RequestMemberSignIn("test","Test","est","test");
         memberService.signInMember(requestMemberSignIn);
         Assertions.assertThat( memberRepositoryImpl.findByEmail("test").isPresent()).isEqualTo(true);
     }
@@ -53,10 +48,7 @@ public class MemberTest extends IntegralTestEnv {
     @Test
     @DisplayName("회원 데이터 수정 체크")
     void checkUpdateMemberInfo(){
-        RequestChangeMemberInfo requestChangeMemberInfo=RequestChangeMemberInfo.builder()
-                .memberProperty(MemberProperty.PASSWORD)
-                .value("testpassword")
-                .build();
+        RequestChangeMemberInfo requestChangeMemberInfo=new RequestChangeMemberInfo(MemberProperty.PASSWORD,"testPassword");
         CustomUserDetail customUserDetail = new CustomUserDetail(m1);
 
 

@@ -17,7 +17,6 @@ public class RequestDtos {
         @NotNull(message = "바꿀려는 회원정보의 값을 넣어주세요")
         private String value;
 
-        @Builder
         public RequestChangeMemberInfo(MemberProperty memberProperty, String value) {
             this.memberProperty = memberProperty;
             this.value = value;
@@ -36,7 +35,7 @@ public class RequestDtos {
         private String imgUrl;
         @NotNull(message = "회원가입시 닉네임은 필수값입니다")
         private String nickName;
-        @Builder
+
         public RequestMemberSignIn(String email, String password, String imgUrl, String nickName) {
             this.email = email;
             this.password = password;

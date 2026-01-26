@@ -3,6 +3,7 @@ package com.project.demo.mail.utility;
 
 import com.project.demo.mail.domain.EmailType;
 import com.project.demo.mail.utility.AbstractMailSend;
+import com.project.demo.redis.RedisUserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -13,8 +14,11 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 @Slf4j
 public class AuthMailSend extends AbstractMailSend {
 
-    public AuthMailSend(JavaMailSender javaMailSender, SpringTemplateEngine templateEngine) {
+
+    private RedisUserInfoService redisUserInfoService;
+    public AuthMailSend(JavaMailSender javaMailSender, SpringTemplateEngine templateEngine,RedisUserInfoService redisUserInfoService) {
         super(javaMailSender, templateEngine);
+        this.redisUserInfoService=redisUserInfoService;
     }
 
     @Override
@@ -32,9 +36,7 @@ public class AuthMailSend extends AbstractMailSend {
         log.info("auth mail 호출");
         Context context=new Context();
         context.setVariable("인증코드",(String) data);
-        /*
-         * 인증코드 만든느 로직 추가.
-         * */
+        redisUserInfoService.createAuthCode(email,(String) data);
         return templateEngine.process("mail/auth-code",context);
     }
 

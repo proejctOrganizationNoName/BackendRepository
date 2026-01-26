@@ -57,7 +57,7 @@ public class MemberService {
                 member.updateNickName(memberInfo.getValue());
             }
             case MemberProperty.PASSWORD -> {
-                member.updatePassword(memberInfo.getValue());
+                member.updatePassword(passwordEncoder.encode(memberInfo.getValue()));
             }
             case MemberProperty.IMGURL -> {
                 member.updateImgUrl(memberInfo.getValue());

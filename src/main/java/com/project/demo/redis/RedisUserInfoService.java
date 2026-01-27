@@ -45,7 +45,7 @@ public class RedisUserInfoService {
         if (ttl != null && ttl > 0) {
             redisTemplate.opsForValue().set(key, member, ttl, TimeUnit.SECONDS);
         } else {
-            redisTemplate.opsForValue().set(key, member);
+            redisTemplate.opsForValue().set(key, member,TimeUnit.DAYS.toSeconds(30L),TimeUnit.SECONDS);
         }
     }
 

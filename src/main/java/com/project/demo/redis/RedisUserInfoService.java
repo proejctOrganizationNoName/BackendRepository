@@ -18,6 +18,7 @@ public class RedisUserInfoService {
     private final static String authCodeKey="member-authcode-key-";
     private final static String userInfoKey="member-info-key-";
     private final static String userRefreshTokenKey="member-refresh-key-";
+    private final static String userProjectKey="member-project-key-";
     private final StringRedisTemplate stringRedisTemplate;
 
     public void createAuthCode(String email,String authCode){
@@ -48,6 +49,17 @@ public class RedisUserInfoService {
             redisTemplate.opsForValue().set(key, member,TimeUnit.DAYS.toSeconds(30L),TimeUnit.SECONDS);
         }
     }
+    public void setUserProjectKey(Long memberId,Long projectId){
+
+        redisTemplate.opsForSet().add(userProjectKey+memberId,projectId.toString());
+    }
+    public void delUserProjectKey(Long memberId,Long projectId){
+        redisTemplate.opsForSet().remove(userProjectKey+memberId,projectId.toString());
+    }
+    public Boolean checkExistProjectKey(Long memberId,Long projectId){
+        return redisTemplate.opsForSet().isMember(userProjectKey+memberId,projectId);
+    }
+
 
     public String getUserInfo(Long id){
         return redisTemplate.opsForValue().get(userInfoKey+id);

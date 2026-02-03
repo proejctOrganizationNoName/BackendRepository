@@ -16,6 +16,6 @@ public class redisTest extends IntegralTestEnv {
     void testing(){
         redisUserInfoService.createAuthCode("test","1234");
         redisUserInfoService.checkAuthCode("test","1234");
-        Assertions.assertThat(redisUserInfoService.authCodePassed("test")).isFalse();
+        Assertions.assertThat(redisUserInfoService.authCodePassed("test")).isTrue();
     }
 }

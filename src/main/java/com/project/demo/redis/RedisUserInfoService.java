@@ -23,13 +23,11 @@ public class RedisUserInfoService {
     private final StringRedisTemplate stringRedisTemplate;
 
     public void createAuthCode(String email,String authCode){
-        stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.createAuthKey),
-                List.of(authCodeKey+email,authCodePassKey+email),authCode
-                ,String.valueOf(1),String.valueOf(300));
+        redisTemplate.opsForValue().set(authCodeKey+email,authCode,300,TimeUnit.SECONDS);
     }
     public void checkAuthCode(String email,String authCode){
         Long ans=stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.checkAuthKey,Long.class),
-                    List.of(authCodeKey+email,authCodePassKey+email),authCode);
+                    List.of(authCodeKey+email,authCodePassKey+email),authCode,String.valueOf(1));
         if(ans!=1){
             throw new RuntimeException("에러");
         }
@@ -64,7 +62,8 @@ public class RedisUserInfoService {
     }
 
     public Boolean authCodePassed(String email){
-        return redisTemplate.opsForValue().get(authCodePassKey+email)!=null;
+      return stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.checkMailAuth,Long.class)
+              ,List.of(authCodePassKey+email))==1;
     }
 
     public String getUserInfo(Long id){

@@ -37,7 +37,7 @@ public class MemberService {
 
     public void signInMember(RequestMemberSignIn requestMemberSignIn){
 
-        if(!redisUserInfoService.authCodePassed(requestMemberSignIn.getEmail())) {
+        if(redisUserInfoService.authCodePassed(requestMemberSignIn.getEmail())) {
             Member member = Member.builder()
                     .email(requestMemberSignIn.getEmail())
                     .password(passwordEncoder.encode(requestMemberSignIn.getPassword()))

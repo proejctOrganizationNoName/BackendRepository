@@ -16,17 +16,20 @@ public class RedisUserInfoService {
 
     private final RedisTemplate<String,String> redisTemplate;
     private final static String authCodeKey="member-authcode-key-";
+    private final static String authCodePassKey="member-authcode-pass-";
     private final static String userInfoKey="member-info-key-";
     private final static String userRefreshTokenKey="member-refresh-key-";
     private final static String userProjectKey="member-project-key-";
     private final StringRedisTemplate stringRedisTemplate;
 
     public void createAuthCode(String email,String authCode){
-        redisTemplate.opsForValue().set(authCodeKey+email,authCode,300, TimeUnit.SECONDS);
+        stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.createAuthKey),
+                List.of(authCodeKey+email,authCodePassKey+email),authCode
+                ,String.valueOf(1),String.valueOf(300));
     }
     public void checkAuthCode(String email,String authCode){
         Long ans=stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.checkAuthKey,Long.class),
-                    List.of(authCodeKey+email),authCode);
+                    List.of(authCodeKey+email,authCodePassKey+email),authCode);
         if(ans!=1){
             throw new RuntimeException("에러");
         }
@@ -60,6 +63,9 @@ public class RedisUserInfoService {
         return redisTemplate.opsForSet().isMember(userProjectKey+memberId,projectId);
     }
 
+    public Boolean authCodePassed(String email){
+        return redisTemplate.opsForValue().get(authCodePassKey+email)!=null;
+    }
 
     public String getUserInfo(Long id){
         return redisTemplate.opsForValue().get(userInfoKey+id);

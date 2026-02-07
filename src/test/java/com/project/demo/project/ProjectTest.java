@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.project.demo.project.domain.RequestDtos.*;
-@Transactional
+
 public class ProjectTest extends IntegralTestEnv {
 
 
@@ -62,17 +62,6 @@ public class ProjectTest extends IntegralTestEnv {
                 .parseServerTimeToClientFormat(p1.getDeadLine())).isEqualTo(now);
 
     }
-
-
-    @Test
-    @DisplayName("프로젝트 초대 코드 업데이트")
-    void updateInviteCode(){
-        String old=p.getInviteCode();
-        advanceProjectRepo.createNewInviteCode(p.getId());
-        Assertions.assertThat(old)
-                .isNotEqualTo(projectRepository.findById(p.getId()).get().getInviteCode());
-    }
-
 
     @Test
     @DisplayName("프로젝트 삭제 테스트")

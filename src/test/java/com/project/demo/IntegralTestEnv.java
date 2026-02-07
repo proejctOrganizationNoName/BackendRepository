@@ -8,6 +8,9 @@ import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberType;
 import com.project.demo.member.repository.MemberRepository;
 import com.project.demo.member.repository.MemberRepositoryAdvance;
+import com.project.demo.notify.Repository.NotifyRepository;
+import com.project.demo.notify.domain.Notify;
+import com.project.demo.notify.service.NotifyService;
 import com.project.demo.project.domain.Project;
 import com.project.demo.project.repository.AdvanceProjectRepo;
 import com.project.demo.project.repository.ProjectRepository;
@@ -55,11 +58,12 @@ public class IntegralTestEnv {
     @Autowired
     protected AgreementRepository agreementRepository;
 
+    @Autowired
+    protected NotifyRepository notifyRepository;
 
     @Autowired
-    protected AdvanceRuleRepository advanceRuleRepository;
-    @Autowired
-    protected AdvanceAgreementRepository advanceAgreementRepository;
+    protected NotifyService notifyService;
+
     @Autowired
     protected TicketService ticketService;
 
@@ -104,6 +108,7 @@ public class IntegralTestEnv {
         projectRepository.deleteAllInBatch();
         agreementRepository.deleteAllInBatch();
         ruleRepository.deleteAllInBatch();
+        notifyRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -167,6 +172,19 @@ public class IntegralTestEnv {
                 .build();
         agreement=agreementRepository.save(agreement);
         return agreement;
+    }
+
+    public Notify createNotify(String content,String title,Long projectId){
+        Notify notify=Notify.builder()
+                .title(title)
+                .content(content)
+                .projectId(projectId)
+                .build();
+
+        notify=notifyRepository.save(notify);
+
+        return notify;
+
     }
 
 }

@@ -8,23 +8,32 @@ import com.project.demo.member.domain.Member;
 import com.project.demo.member.domain.MemberType;
 import com.project.demo.member.repository.MemberRepository;
 import com.project.demo.member.repository.MemberRepositoryAdvance;
+import com.project.demo.project.domain.Project;
+import com.project.demo.project.repository.AdvanceProjectRepo;
+import com.project.demo.project.repository.ProjectRepository;
+import com.project.demo.project.service.ProjectService;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.ticket.domain.Ticket;
 import com.project.demo.ticket.domain.TicketGrade;
 import com.project.demo.ticket.repository.AdvanceTicketRepository;
 import com.project.demo.ticket.repository.TicketRepository;
 import com.project.demo.ticket.service.TicketService;
+import com.project.demo.utility.CustomDateTimeFormat;
 import com.project.demo.utility.jwt.JwtUtility;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @ActiveProfiles(value = "test")
 @SpringBootTest
 public class IntegralTestEnv {
-
 
     @Autowired
     protected MemberRepositoryAdvance memberRepositoryImpl;
@@ -36,6 +45,12 @@ public class IntegralTestEnv {
 
     @Autowired
     protected TicketRepository ticketRepository;
+    protected AdvanceProjectRepo advanceProjectRepo;
+    @Autowired
+    protected ProjectRepository projectRepository;
+
+    @Autowired
+    protected ProjectService projectService;
     @Autowired
     protected PasswordEncoder passwordEncoder;
     @Autowired
@@ -63,6 +78,7 @@ public class IntegralTestEnv {
     void cleanAfterTest(){
         memberRepository.deleteAllInBatch();
         ticketRepository.deleteAllInBatch();;
+        projectRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -99,5 +115,13 @@ public class IntegralTestEnv {
         t.updateTicketGrade(TicketGrade.MASTER);
         t=ticketRepository.save(t);
         return t;
+    public Project createProject(){
+        Project p= Project.builder()
+                .projectName("test")
+                .deadLine(LocalDateTime.now())
+                .inviteCode(UUID.randomUUID().toString())
+                .build();
+        p=advanceProjectRepo.createProject(p);
+        return p;
     }
 }

@@ -11,7 +11,7 @@ public class CustomDateTimeFormat {
 
     public static final DateTimeFormatter FLEXIBLE_NANO_FORMATTER = new DateTimeFormatterBuilder()
             .appendPattern("yyyy-MM-dd HH:mm:ss") // 기본 날짜-시간 패턴
-            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true) // 소수점 초 (나노초)를 0~9자리까지 선택적으로 추가
+            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 6, true) // 소수점 초 (나노초)를 0~9자리까지 선택적으로 추가
             .toFormatter();
     public static final LocalDateTime parseClientTimetoServerFormat(String time){
         return LocalDateTime.parse(time,FLEXIBLE_NANO_FORMATTER);

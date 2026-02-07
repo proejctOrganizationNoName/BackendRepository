@@ -4,7 +4,10 @@ package com.project.demo.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.demo.member.Service.SecurityMemberReadService;
 import com.project.demo.member.repository.MemberRepositoryAdvance;
+import com.project.demo.redis.RedisRuleInfoService;
 import com.project.demo.redis.RedisUserInfoService;
+import com.project.demo.rule.repository.AdvanceRuleRepository;
+import com.project.demo.rule.service.RuleAgreementService;
 import com.project.demo.security.filter.JwtAuthFilter;
 import com.project.demo.security.filter.LoginFilter;
 import com.project.demo.security.filter.TicketFilter;
@@ -38,6 +41,8 @@ public class SecurityConfig {
     private final JwtUtility jwtUtility;
     private final WebConfig webConfig;
     private final AdvanceTicketRepository advanceTicketRepository;
+    private final RedisRuleInfoService redisRuleInfoService;
+    private final RuleAgreementService ruleAgreementService;
 
     private final static String[] freePath = {
             "/member/request/signIn", "/member/logout","/mail/**"
@@ -64,7 +69,7 @@ public class SecurityConfig {
         security.addFilterAfter(new JwtAuthFilter(redisUserInfoService,jwtUtility,memberRepository,objectMapper)
         , UsernamePasswordAuthenticationFilter.class);
 
-        security.addFilterAfter(new TicketFilter(redisUserInfoService,advanceTicketRepository)
+        security.addFilterAfter(new TicketFilter(redisUserInfoService,redisRuleInfoService,advanceTicketRepository,ruleAgreementService)
                 , JwtAuthFilter.class);
 
         security.logout(logout->logout.logoutUrl("/member/logout")

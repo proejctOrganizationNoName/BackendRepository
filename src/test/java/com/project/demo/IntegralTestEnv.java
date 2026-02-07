@@ -13,6 +13,13 @@ import com.project.demo.project.repository.AdvanceProjectRepo;
 import com.project.demo.project.repository.ProjectRepository;
 import com.project.demo.project.service.ProjectService;
 import com.project.demo.redis.RedisUserInfoService;
+import com.project.demo.rule.domain.Agreement;
+import com.project.demo.rule.domain.Rule;
+import com.project.demo.rule.repository.AdvanceAgreementRepository;
+import com.project.demo.rule.repository.AdvanceRuleRepository;
+import com.project.demo.rule.repository.AgreementRepository;
+import com.project.demo.rule.repository.RuleRepository;
+import com.project.demo.rule.service.RuleAgreementService;
 import com.project.demo.ticket.domain.Ticket;
 import com.project.demo.ticket.domain.TicketGrade;
 import com.project.demo.ticket.repository.AdvanceTicketRepository;
@@ -40,6 +47,19 @@ public class IntegralTestEnv {
     @Autowired
     protected AdvanceTicketRepository advanceTicketRepository;
 
+    @Autowired
+    protected RuleAgreementService ruleAgreementService;
+    @Autowired
+    protected RuleRepository ruleRepository;
+
+    @Autowired
+    protected AgreementRepository agreementRepository;
+
+
+    @Autowired
+    protected AdvanceRuleRepository advanceRuleRepository;
+    @Autowired
+    protected AdvanceAgreementRepository advanceAgreementRepository;
     @Autowired
     protected TicketService ticketService;
 
@@ -79,6 +99,8 @@ public class IntegralTestEnv {
         memberRepository.deleteAllInBatch();
         ticketRepository.deleteAllInBatch();;
         projectRepository.deleteAllInBatch();
+        agreementRepository.deleteAllInBatch();
+        ruleRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -106,15 +128,16 @@ public class IntegralTestEnv {
         return t;
     }
 
-    public Ticket createAdminTicket(Long memberId,Long projectId){
-        Ticket t=Ticket.builder()
+    public Ticket createAdminTicket(Long memberId,Long projectId) {
+        Ticket t = Ticket.builder()
                 .memberId(memberId)
                 .projectId(projectId)
                 .role(null)
                 .build();
         t.updateTicketGrade(TicketGrade.MASTER);
-        t=ticketRepository.save(t);
+        t = ticketRepository.save(t);
         return t;
+    }
     public Project createProject(){
         Project p= Project.builder()
                 .projectName("test")
@@ -124,4 +147,23 @@ public class IntegralTestEnv {
         p=advanceProjectRepo.createProject(p);
         return p;
     }
+    public Rule createRule(Long id,String content){
+
+        Rule rule=Rule.builder()
+                .content(content)
+                .projectId(id)
+                .build();
+        rule=ruleRepository.save(rule);
+        return rule;
+    }
+    public Agreement createAgreement(Long projectId,Long ruleId,Long memberId){
+        Agreement agreement=Agreement.builder()
+                .projectId(projectId)
+                .ruleId(ruleId)
+                .memberId(memberId)
+                .build();
+        agreement=agreementRepository.save(agreement);
+        return agreement;
+    }
+
 }

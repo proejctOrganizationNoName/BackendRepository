@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import static com.project.demo.notify.domain.ResponseNotifyDto.*;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class AdvanceNotifyRepository {
 
     private final NotifyRepository notifyRepository;
@@ -68,7 +70,8 @@ public class AdvanceNotifyRepository {
                         notify.notifyId,
                         notify.title,
                         Expressions.nullExpression(String.class),
-                        notify.createDate.stringValue()
+                        notify.createDate.stringValue(),
+                        notify.updateDate.stringValue()
                         ))
                 .from(notify)
                 .where(notify.projectId.eq(projectId))
@@ -81,10 +84,6 @@ public class AdvanceNotifyRepository {
                 .from(notify)
                 .where(notify.projectId.eq(projectId))
                 .fetchOne();
-
-        notifyDtoList.stream().forEach(x->{
-            x.updateDateTime();
-        });
 
         return new PageImpl<>(notifyDtoList,pageable,count);
     }

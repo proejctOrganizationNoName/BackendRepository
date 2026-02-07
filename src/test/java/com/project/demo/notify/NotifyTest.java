@@ -49,7 +49,6 @@ public class NotifyTest extends IntegralTestEnv {
         notifyService.updateNotify(notifyUpdateDto);
 
         Notify notify1=notifyRepository.findById(notify.getNotifyId()).get();
-
         assertThat(notify1.getTitle()).isEqualTo("xxx");
         assertThat(notify1.getContent()).isEqualTo("xxx");
     }
@@ -64,5 +63,12 @@ public class NotifyTest extends IntegralTestEnv {
                 .build();
         Page<NotifyDto>notifyDtos=notifyService.getNotifyList(notifyList);
         assertThat(notifyDtos.getTotalElements()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("공지 가져오기 테스트")
+    void getNotifyTest(){
+        NotifyDto notifyDto=notifyService.findById(notify.getNotifyId());
+        System.out.println(notifyDto.getCreateDate());
     }
 }

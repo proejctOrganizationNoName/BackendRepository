@@ -65,6 +65,9 @@ public class IntegralTestEnv {
 
     @Autowired
     protected TicketRepository ticketRepository;
+
+
+    @Autowired
     protected AdvanceProjectRepo advanceProjectRepo;
     @Autowired
     protected ProjectRepository projectRepository;

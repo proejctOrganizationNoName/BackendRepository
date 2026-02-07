@@ -7,9 +7,19 @@ public class RedisLuaScript {
             "if authCode==nil or authCode~=ARGV[1] then\n" +
             "    return 0 \n" +
             "else\n" +
-            "    redis.call(\"del\",KEYS[1])\n" +
+            "    redis.call(\"del\",KEYS[1])\n"+
+            "    redis.call(\"set\",KEYS[2],ARGV[2])\n"+
             "    return 1 \n" +
             "end";
+
+    public final static String checkMailAuth="local val=redis.call(\"get\", KEYS[1])\n" +
+            "if val==nil then \n"+
+            "  return 0\n"+
+            "else\n"+
+            "   redis.call(\"del\",KEYS[1])\n"+
+            "return 1\n"+
+            "end";
+
 
 
     // 차례대로 회원 정보 저장, 회원 refresh 토큰 저장

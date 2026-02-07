@@ -19,6 +19,11 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final com.project.demo.utility.QBaseTime _super = new com.project.demo.utility.QBaseTime(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
+
     public final BooleanPath deleted = createBoolean("deleted");
 
     public final StringPath email = createString("email");
@@ -32,6 +37,9 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath nickName = createString("nickName");
 
     public final StringPath password = createString("password");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

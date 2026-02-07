@@ -2,15 +2,18 @@ package com.project.demo.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.demo.member.Service.SecurityMemberReadService;
 import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.security.filter.JwtAuthFilter;
 import com.project.demo.security.filter.LoginFilter;
+import com.project.demo.security.filter.TicketFilter;
 import com.project.demo.security.handler.CustomLogOutHandler;
 import com.project.demo.security.handler.CustomOauth2LoginFailer;
 import com.project.demo.security.handler.CustomOauth2LoginSuccesser;
 import com.project.demo.security.service.CustomOauth2Service;
 import com.project.demo.security.service.CustomUserDetailService;
+import com.project.demo.ticket.repository.AdvanceTicketRepository;
 import com.project.demo.utility.jwt.JwtUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +37,7 @@ public class SecurityConfig {
     private final RedisUserInfoService redisUserInfoService;
     private final JwtUtility jwtUtility;
     private final WebConfig webConfig;
+    private final AdvanceTicketRepository advanceTicketRepository;
 
     private final static String[] freePath = {
             "/member/request/signIn", "/member/logout","/mail/**"
@@ -60,6 +64,8 @@ public class SecurityConfig {
         security.addFilterAfter(new JwtAuthFilter(redisUserInfoService,jwtUtility,memberRepository,objectMapper)
         , UsernamePasswordAuthenticationFilter.class);
 
+        security.addFilterAfter(new TicketFilter(redisUserInfoService,advanceTicketRepository)
+                , JwtAuthFilter.class);
 
         security.logout(logout->logout.logoutUrl("/member/logout")
                 .invalidateHttpSession(true)

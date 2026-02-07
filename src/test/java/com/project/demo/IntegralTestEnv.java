@@ -13,6 +13,11 @@ import com.project.demo.project.repository.AdvanceProjectRepo;
 import com.project.demo.project.repository.ProjectRepository;
 import com.project.demo.project.service.ProjectService;
 import com.project.demo.redis.RedisUserInfoService;
+import com.project.demo.ticket.domain.Ticket;
+import com.project.demo.ticket.domain.TicketGrade;
+import com.project.demo.ticket.repository.AdvanceTicketRepository;
+import com.project.demo.ticket.repository.TicketRepository;
+import com.project.demo.ticket.service.TicketService;
 import com.project.demo.utility.CustomDateTimeFormat;
 import com.project.demo.utility.jwt.JwtUtility;
 import jakarta.persistence.EntityManager;
@@ -33,6 +38,13 @@ public class IntegralTestEnv {
     @Autowired
     protected MemberRepositoryAdvance memberRepositoryImpl;
     @Autowired
+    protected AdvanceTicketRepository advanceTicketRepository;
+
+    @Autowired
+    protected TicketService ticketService;
+
+    @Autowired
+    protected TicketRepository ticketRepository;
     protected AdvanceProjectRepo advanceProjectRepo;
     @Autowired
     protected ProjectRepository projectRepository;
@@ -65,6 +77,7 @@ public class IntegralTestEnv {
     @AfterEach
     void cleanAfterTest(){
         memberRepository.deleteAllInBatch();
+        ticketRepository.deleteAllInBatch();;
         projectRepository.deleteAllInBatch();
     }
 
@@ -82,6 +95,26 @@ public class IntegralTestEnv {
         return m;
     }
 
+    public Ticket createTicket(Long memberId,Long projectId){
+        Ticket t=Ticket.builder()
+                .memberId(memberId)
+                .projectId(projectId)
+                .role(null)
+                .build();
+
+        t=ticketRepository.save(t);
+        return t;
+    }
+
+    public Ticket createAdminTicket(Long memberId,Long projectId){
+        Ticket t=Ticket.builder()
+                .memberId(memberId)
+                .projectId(projectId)
+                .role(null)
+                .build();
+        t.updateTicketGrade(TicketGrade.MASTER);
+        t=ticketRepository.save(t);
+        return t;
     public Project createProject(){
         Project p= Project.builder()
                 .projectName("test")

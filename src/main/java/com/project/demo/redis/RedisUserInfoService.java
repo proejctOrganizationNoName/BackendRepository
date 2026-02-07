@@ -16,16 +16,18 @@ public class RedisUserInfoService {
 
     private final RedisTemplate<String,String> redisTemplate;
     private final static String authCodeKey="member-authcode-key-";
+    private final static String authCodePassKey="member-authcode-pass-";
     private final static String userInfoKey="member-info-key-";
     private final static String userRefreshTokenKey="member-refresh-key-";
+    private final static String userProjectKey="member-project-key-";
     private final StringRedisTemplate stringRedisTemplate;
 
     public void createAuthCode(String email,String authCode){
-        redisTemplate.opsForValue().set(authCodeKey+email,authCode,300, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(authCodeKey+email,authCode,300,TimeUnit.SECONDS);
     }
     public void checkAuthCode(String email,String authCode){
         Long ans=stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.checkAuthKey,Long.class),
-                    List.of(authCodeKey+email),authCode);
+                    List.of(authCodeKey+email,authCodePassKey+email),authCode,String.valueOf(1));
         if(ans!=1){
             throw new RuntimeException("에러");
         }
@@ -47,6 +49,21 @@ public class RedisUserInfoService {
         } else {
             redisTemplate.opsForValue().set(key, member,TimeUnit.DAYS.toSeconds(30L),TimeUnit.SECONDS);
         }
+    }
+    public void setUserProjectKey(Long memberId,Long projectId){
+
+        redisTemplate.opsForSet().add(userProjectKey+memberId,projectId.toString());
+    }
+    public void delUserProjectKey(Long memberId,Long projectId){
+        redisTemplate.opsForSet().remove(userProjectKey+memberId,projectId.toString());
+    }
+    public Boolean checkExistProjectKey(Long memberId,Long projectId){
+        return redisTemplate.opsForSet().isMember(userProjectKey+memberId,projectId);
+    }
+
+    public Boolean authCodePassed(String email){
+      return stringRedisTemplate.execute(new DefaultRedisScript<>(RedisLuaScript.checkMailAuth,Long.class)
+              ,List.of(authCodePassKey+email))==1;
     }
 
     public String getUserInfo(Long id){

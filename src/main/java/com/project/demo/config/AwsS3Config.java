@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AwsS3Config {
-    @Value("${cloud.aws.credentials.access-key}") // application.yml 에 명시한 내용
+    @Value("${spring.cloud.aws.credential.access-key}") // application.yml 에 명시한 내용
     private String accessKey;
 
-    @Value("${cloud.aws.credentials.secret-key}")
+    @Value("${spring.cloud.aws.credential.secret-key}")
     private String secretKey;
 
-    @Value("${cloud.aws.region.static}")
+    @Value("${spring.cloud.aws.region.static}")
     private String region;
 
     @Bean

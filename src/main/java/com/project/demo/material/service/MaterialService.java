@@ -26,7 +26,7 @@ import static com.project.demo.material.domain.ResponseMaterialDto.*;
 @Service
 @RequiredArgsConstructor
 public class MaterialService {
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;
     private final Tika tika;
     private final AmazonS3 amazonS3;

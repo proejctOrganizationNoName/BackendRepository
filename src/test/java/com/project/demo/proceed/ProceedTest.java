@@ -75,19 +75,16 @@ public class ProceedTest extends IntegralTestEnv {
     @Test
     @DisplayName("회의록,참여자 삭제,생성 테스트")
     void testDelProceedAndLogDelTest(){
-        System.out.println("--------시작------------");
-        proceedService.delProceedLog(proceedingLog.getMemberId());
+
+        proceedService.delProceedLog(proceedingLog.getId());
         ProceedDto proceedDto=proceedService.getProceed(proceeding.getId());
         assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(0);
 
-
-        System.out.println("--------중간------------");
         proceedService.createProceedLog(proceeding.getId(),m.getId(),m.getNickName());
         proceedDto=proceedService.getProceed(proceeding.getId());
         assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(1);
 
         proceedService.delProceed(proceeding.getId());
-        System.out.println("--------여기인가?------------");
         assertThatThrownBy(()->proceedService.getProceed(proceeding.getId()))
                 .hasMessage("에러");
 

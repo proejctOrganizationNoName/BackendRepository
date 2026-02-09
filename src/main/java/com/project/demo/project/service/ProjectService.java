@@ -38,5 +38,4 @@ public class ProjectService {
     public void updateProject(RequestUpdateProjectDto requestUpdateProjectDto){
             advanceProjectRepo.updateProject(requestUpdateProjectDto);
     }
-
 }

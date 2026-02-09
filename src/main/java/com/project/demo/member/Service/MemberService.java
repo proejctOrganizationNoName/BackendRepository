@@ -6,13 +6,17 @@ import com.project.demo.member.domain.MemberProperty;
 import com.project.demo.member.domain.MemberType;
 import com.project.demo.member.domain.RequestDtos.RequestChangeMemberInfo;
 import com.project.demo.member.domain.RequestDtos.RequestMemberSignIn;
+import com.project.demo.member.domain.ResponseDtos;
 import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.redis.RedisUserInfoService;
+import com.project.demo.utility.CustomDateTimeFormat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.project.demo.member.domain.ResponseDtos.*;
 
 
 @Service
@@ -33,10 +37,7 @@ public class MemberService {
         memberRepository.checkExist(email);
     }
 
-
-
     public void signInMember(RequestMemberSignIn requestMemberSignIn){
-
         if(redisUserInfoService.authCodePassed(requestMemberSignIn.getEmail())) {
             Member member = Member.builder()
                     .email(requestMemberSignIn.getEmail())
@@ -51,8 +52,6 @@ public class MemberService {
             throw new CustomError("인증 단계를 아직 거치지 못했습니다");
         }
     }
-
-
     public void changeMemberInfo(RequestChangeMemberInfo memberInfo){
 
         Member member=securityMemberReadService.securityMemberRead();
@@ -71,6 +70,16 @@ public class MemberService {
             }
         }
         memberRepository.saveMember(member);
+    }
+    public MemberDto getMemberInfo(){
+        Member member=securityMemberReadService.securityMemberRead();
+        return MemberDto.builder()
+                .id(member.getId())
+                .createDate(CustomDateTimeFormat.parseServerTimeToClientFormat(member.getCreateDate()))
+                .email(member.getEmail())
+                .nickName(member.getNickName())
+                .imgUrl(member.getImgUrl())
+                .build();
     }
 
 }

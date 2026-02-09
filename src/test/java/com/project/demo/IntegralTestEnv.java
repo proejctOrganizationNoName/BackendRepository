@@ -11,6 +11,12 @@ import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.notify.Repository.NotifyRepository;
 import com.project.demo.notify.domain.Notify;
 import com.project.demo.notify.service.NotifyService;
+import com.project.demo.proceeding.domain.Proceeding;
+import com.project.demo.proceeding.domain.ProceedingLog;
+import com.project.demo.proceeding.repositroy.AdvanceProceedingRepository;
+import com.project.demo.proceeding.repositroy.ProceedingLogRepository;
+import com.project.demo.proceeding.repositroy.ProceedingRepository;
+import com.project.demo.proceeding.service.ProceedService;
 import com.project.demo.project.domain.Project;
 import com.project.demo.project.repository.AdvanceProjectRepo;
 import com.project.demo.project.repository.ProjectRepository;
@@ -50,6 +56,13 @@ public class IntegralTestEnv {
     @Autowired
     protected AdvanceTicketRepository advanceTicketRepository;
 
+
+    @Autowired
+    protected ProceedingRepository proceedingRepository;
+
+    @Autowired
+    protected ProceedingLogRepository proceedingLogRepository;
+
     @Autowired
     protected RuleAgreementService ruleAgreementService;
     @Autowired
@@ -70,6 +83,9 @@ public class IntegralTestEnv {
     @Autowired
     protected TicketRepository ticketRepository;
 
+
+    @Autowired
+    protected ProceedService proceedService;
 
     @Autowired
     protected AdvanceProjectRepo advanceProjectRepo;
@@ -109,6 +125,8 @@ public class IntegralTestEnv {
         agreementRepository.deleteAllInBatch();
         ruleRepository.deleteAllInBatch();
         notifyRepository.deleteAllInBatch();
+        proceedingRepository.deleteAllInBatch();
+        proceedingLogRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -184,7 +202,23 @@ public class IntegralTestEnv {
         notify=notifyRepository.save(notify);
 
         return notify;
+    }
 
+    public Proceeding createProceeding(String content,String title,Long projectid){
+        Proceeding proceeding=Proceeding.builder()
+                .content(content)
+                .title(title)
+                .projectId(projectid)
+                .build();
+        return proceedingRepository.save(proceeding);
+    }
+
+    public ProceedingLog createProceedingLog(Long proceedId,Long memberId){
+        ProceedingLog proceedingLog= ProceedingLog.builder()
+                .proceedingId(proceedId)
+                .memberId(memberId)
+                .build();
+        return proceedingLogRepository.save(proceedingLog);
     }
 
 }

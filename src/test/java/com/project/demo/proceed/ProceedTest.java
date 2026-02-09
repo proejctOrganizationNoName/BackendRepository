@@ -78,15 +78,14 @@ public class ProceedTest extends IntegralTestEnv {
 
         proceedService.delProceedLog(proceedingLog.getMemberId());
         ProceedDto proceedDto=proceedService.getProceed(proceeding.getId());
-
         assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(0);
+
         proceedService.createProceedLog(proceeding.getId(),m.getId(),m.getNickName());
-
         proceedDto=proceedService.getProceed(proceeding.getId());
-
         assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(1);
 
         proceedService.delProceed(proceeding.getId());
+        System.out.println("--------여기인가?------------");
         assertThatThrownBy(()->proceedService.getProceed(proceeding.getId()))
                 .hasMessage("에러");
 

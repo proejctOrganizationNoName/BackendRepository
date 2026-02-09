@@ -1,6 +1,17 @@
 spring:
   application:
     name: demo
+  cloud:
+    aws:
+      credential:
+        access-key: "1234"
+        secret-key: "1234"
+      s3:
+        bucket: "1234"
+        personal-base-img: ""
+        project-base-img: ""
+      region:
+        static: "ap-northeast-2"
   data:
     redis:
       host: localhost

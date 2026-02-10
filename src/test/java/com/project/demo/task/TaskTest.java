@@ -93,4 +93,14 @@ public class TaskTest extends IntegralTestEnv {
         assertThat(taskDto.getMemberDtoList().size()).isEqualTo(1);
         assertThat(taskDto.getMemberDtoList().get(0).getParticipantId()).isNotEqualTo(participant.getId());
     }
+
+
+    @Test
+    @DisplayName("삭제 테스트")
+    void delTest(){
+        taskService.delTask(task.getId());
+
+        assertThatThrownBy(()->taskService.getTask(task.getId()))
+                .hasMessage("없는 TASK 입니다");
+    }
 }

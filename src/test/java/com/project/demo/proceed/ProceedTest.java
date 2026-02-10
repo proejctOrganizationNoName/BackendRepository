@@ -76,15 +76,6 @@ public class ProceedTest extends IntegralTestEnv {
     @Test
     @DisplayName("회의록,참여자 삭제,생성 테스트")
     void testDelProceedAndLogDelTest(){
-
-        proceedService.delProceedLog(participant.getId());
-        ProceedDto proceedDto=proceedService.getProceed(proceeding.getId());
-        assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(0);
-
-        proceedService.createProceedLog(proceeding.getId(),m.getId(),m.getNickName());
-        proceedDto=proceedService.getProceed(proceeding.getId());
-        assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(1);
-
         proceedService.delProceed(proceeding.getId());
         assertThatThrownBy(()->proceedService.getProceed(proceeding.getId()))
                 .hasMessage("에러");

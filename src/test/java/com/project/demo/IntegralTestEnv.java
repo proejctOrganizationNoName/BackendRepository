@@ -27,18 +27,24 @@ import com.project.demo.rule.domain.Rule;
 import com.project.demo.rule.repository.AgreementRepository;
 import com.project.demo.rule.repository.RuleRepository;
 import com.project.demo.rule.service.RuleAgreementService;
+import com.project.demo.task.domain.Task;
+import com.project.demo.task.domain.TaskState;
+import com.project.demo.task.repository.TaskRepository;
+import com.project.demo.task.service.TaskService;
 import com.project.demo.ticket.domain.Ticket;
 import com.project.demo.ticket.domain.TicketGrade;
 import com.project.demo.ticket.repository.AdvanceTicketRepository;
 import com.project.demo.ticket.repository.TicketRepository;
 import com.project.demo.ticket.service.TicketService;
 import com.project.demo.utility.jwt.JwtUtility;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.swing.text.html.parser.Entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -47,16 +53,24 @@ import java.util.UUID;
 public class IntegralTestEnv {
 
     @Autowired
+    protected EntityManager em;
+
+    @Autowired
     protected MemberRepositoryAdvance memberRepositoryImpl;
     @Autowired
     protected AdvanceTicketRepository advanceTicketRepository;
 
+    @Autowired
+    protected ParticipantRepository participantRepository;
 
     @Autowired
     protected ProceedingRepository proceedingRepository;
 
     @Autowired
-    protected ParticipantRepository participantRepository;
+    protected TaskRepository taskRepository;
+
+    @Autowired
+    protected TaskService taskService;
 
     @Autowired
     protected RuleAgreementService ruleAgreementService;
@@ -122,6 +136,7 @@ public class IntegralTestEnv {
         notifyRepository.deleteAllInBatch();
         proceedingRepository.deleteAllInBatch();
         participantRepository.deleteAllInBatch();
+        taskRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -215,6 +230,17 @@ public class IntegralTestEnv {
                 .participantType(participantType)
                 .build();
         return participantRepository.save(participant);
+    }
+
+    public Task createTask(Long projectId,String title,String content,LocalDateTime deadLine){
+        Task t=Task.builder()
+                .content(content)
+                .title(title)
+                .deadLine(deadLine)
+                .projectId(projectId)
+                .build();
+        t=taskRepository.save(t);
+        return t;
     }
 
 }

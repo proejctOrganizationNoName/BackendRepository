@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import static com.project.demo.member.domain.QMember.*;
 import static com.project.demo.participant.domain.ParticipantResponseDto.*;
 import static com.project.demo.participant.domain.QParticipant.*;
@@ -33,8 +34,6 @@ public class AdvanceProceedingRepository {
     private final AdvanceParticipantRepository advanceParticipantRepository;
     private final JPAQueryFactory jpaQueryFactory;
 
-
-
     private Proceeding proceedingFindBYId(Long id){
         Optional<Proceeding> proceeding=proceedingRepository.findById(id);
         if(proceeding.isEmpty()||proceeding.get().getDeleted()){
@@ -44,7 +43,6 @@ public class AdvanceProceedingRepository {
     }
 
     public Page<ProceedDto> getProceedList(Pageable pageable, Long projectId){
-
         List<ProceedDto> proceedings=jpaQueryFactory.select(Projections.constructor(
                 ProceedDto.class,
                         proceeding.id,
@@ -68,29 +66,10 @@ public class AdvanceProceedingRepository {
 
         return new PageImpl<>(proceedings,pageable,count);
     }
-
-
     public void delProceed(Long id){
         Proceeding proceeding1=proceedingFindBYId(id);
         proceeding1.updateDeleted();
     }
-
-    public ResponseParticipantMemberDto createNewProceedParticipant(Long proceedId,Long memberId,String name) {
-        Participant participant=advanceParticipantRepository
-                .createParticipant(memberId,proceedId,ParticipantType.PROCEED);
-
-        return ResponseParticipantMemberDto.builder()
-                .participantId(participant.getId())
-                .memberId(memberId)
-                .name(name)
-                .build();
-    }
-    public void delProceedParticipant(Long participantId){
-        advanceParticipantRepository.delParticipant(participantId);
-    }
-
-
-
     public ProceedDto createProceeding(RequestProceedingCreate requestProceedingCreate){
         Proceeding p=Proceeding.builder()
                 .projectId(requestProceedingCreate.getProjectId())
@@ -108,18 +87,16 @@ public class AdvanceProceedingRepository {
                             .build();
                 }
         ).collect(Collectors.toList());
-        advanceParticipantRepository.saveAll(participantList);
+        List<Participant> newList=advanceParticipantRepository.saveAll(participantList);
 
-        List<ResponseParticipantMemberDto> proceedMemberDtos=requestProceedingCreate
-                .getRequestProceedMemberDtos().stream()
-                .map(x->{
+        List<ResponseParticipantMemberDto> proceedMemberDtos=IntStream.range(0,participantList.size())
+                .mapToObj(i->{
                     return ResponseParticipantMemberDto.builder()
-                            .memberId(x.getMemberId())
-                            .name(x.getName())
-                            .participantId(proceedId)
+                            .memberId(newList.get(i).getMemberId())
+                            .name(requestProceedingCreate.getRequestProceedMemberDtos().get(i).getName())
+                            .participantId(newList.get(i).getId())
                             .build();
                 }).collect(Collectors.toList());
-
 
         return  ProceedDto.builder()
                 .id(proceedId)

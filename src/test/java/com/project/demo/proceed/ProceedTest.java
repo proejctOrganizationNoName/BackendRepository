@@ -2,12 +2,11 @@ package com.project.demo.proceed;
 
 import com.project.demo.IntegralTestEnv;
 import com.project.demo.member.domain.Member;
+import com.project.demo.participant.domain.Participant;
+import com.project.demo.participant.domain.ParticipantRequestDto;
+import com.project.demo.participant.domain.ParticipantType;
 import com.project.demo.proceeding.domain.Proceeding;
-import com.project.demo.proceeding.domain.ProceedingLog;
-import com.project.demo.proceeding.domain.ProceedingRequestDto;
-import com.project.demo.proceeding.domain.ProceedingResponseDto;
 import com.project.demo.project.domain.Project;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Page;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.project.demo.participant.domain.ParticipantRequestDto.*;
 import static com.project.demo.proceeding.domain.ProceedingRequestDto.*;
 import static com.project.demo.proceeding.domain.ProceedingResponseDto.*;
 import static org.assertj.core.api.Assertions.*;
@@ -29,7 +29,7 @@ public class ProceedTest extends IntegralTestEnv {
 
     Proceeding proceeding;
 
-    ProceedingLog proceedingLog;
+    Participant participant;
 
 
     @BeforeEach
@@ -37,23 +37,24 @@ public class ProceedTest extends IntegralTestEnv {
         m=createMember(0L);
         p=createProject();
         proceeding=createProceeding("test","Test",p.getId());
-        proceedingLog=createProceedingLog(proceeding.getId(),m.getId());
+        participant=createParticipant(proceeding.getId(),m.getId(), ParticipantType.PROCEED);
     }
 
     @Test
     @DisplayName("회의록 생성 테스트")
     void createProceedTest(){
-        List<RequestProceedMemberDto> requestProceedMemberDtos=new ArrayList<>();
-        requestProceedMemberDtos.add(RequestProceedMemberDto.builder()
+        List<RequestParticipantMemberDto> requestParticipantMemberDtos=new ArrayList<>();
+        requestParticipantMemberDtos.add(RequestParticipantMemberDto.builder()
                         .name("test")
                         .memberId(m.getId())
+                        .participantType(ParticipantType.PROCEED)
                 .build());
 
         RequestProceedingCreate requestProceedingCreate= RequestProceedingCreate.builder()
                 .title("test")
                 .projectId(p.getId())
                 .content("test")
-                .memberIds(requestProceedMemberDtos)
+                .memberIds(requestParticipantMemberDtos)
                 .build();
         ProceedDto proceedDto=proceedService.createProceeding(requestProceedingCreate);
 
@@ -76,7 +77,7 @@ public class ProceedTest extends IntegralTestEnv {
     @DisplayName("회의록,참여자 삭제,생성 테스트")
     void testDelProceedAndLogDelTest(){
 
-        proceedService.delProceedLog(proceedingLog.getId());
+        proceedService.delProceedLog(participant.getId());
         ProceedDto proceedDto=proceedService.getProceed(proceeding.getId());
         assertThat(proceedDto.getMemberDtoList().size()).isEqualTo(0);
 

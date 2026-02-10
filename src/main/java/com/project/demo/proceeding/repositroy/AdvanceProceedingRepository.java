@@ -2,37 +2,35 @@ package com.project.demo.proceeding.repositroy;
 
 
 import com.project.demo.excpetion.CustomError;
-import com.project.demo.member.domain.QMember;
+import com.project.demo.participant.domain.Participant;
+import com.project.demo.participant.domain.ParticipantType;
+import com.project.demo.participant.repository.AdvanceParticipantRepository;
 import com.project.demo.proceeding.domain.*;
 import com.project.demo.utility.CustomDateTimeFormat;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static com.project.demo.member.domain.QMember.*;
+import static com.project.demo.participant.domain.ParticipantResponseDto.*;
+import static com.project.demo.participant.domain.QParticipant.*;
 import static com.project.demo.proceeding.domain.ProceedingRequestDto.*;
 import static com.project.demo.proceeding.domain.ProceedingResponseDto.*;
 import static com.project.demo.proceeding.domain.QProceeding.*;
-import static com.project.demo.proceeding.domain.QProceedingLog.*;
 
 @Repository
 @RequiredArgsConstructor
 public class AdvanceProceedingRepository {
 
     private final ProceedingRepository proceedingRepository;
-    private final ProceedingLogRepository proceedingLogRepository;
+    private final AdvanceParticipantRepository advanceParticipantRepository;
     private final JPAQueryFactory jpaQueryFactory;
 
 
@@ -43,14 +41,6 @@ public class AdvanceProceedingRepository {
             throw new CustomError("에러");
         }
         return proceeding.get();
-    }
-
-    private ProceedingLog proceedingLogFindBYId(Long id){
-        Optional<ProceedingLog> proceedingLog=proceedingLogRepository.findById(id);
-        if(proceedingLog.isEmpty()){
-            throw new CustomError("에러");
-        }
-        return proceedingLog.get();
     }
 
     public Page<ProceedDto> getProceedList(Pageable pageable, Long projectId){
@@ -85,23 +75,18 @@ public class AdvanceProceedingRepository {
         proceeding1.updateDeleted();
     }
 
-    public ProceedMemberDto createNewProceedLog(Long proceedId,Long memberId,String name) {
-        ProceedingLog proceedingLog1=ProceedingLog.builder()
-                .memberId(memberId)
-                .proceedingId(proceedId)
-                .build();
-        proceedingLog1= proceedingLogRepository.save(proceedingLog1);
+    public ResponseParticipantMemberDto createNewProceedParticipant(Long proceedId,Long memberId,String name) {
+        Participant participant=advanceParticipantRepository
+                .createParticipant(memberId,proceedId,ParticipantType.PROCEED);
 
-        return ProceedMemberDto.builder()
-                .name(name)
+        return ResponseParticipantMemberDto.builder()
+                .participantId(participant.getId())
                 .memberId(memberId)
-                .proceedLogId(proceedId)
+                .name(name)
                 .build();
     }
-
-    public void delProceedLog(Long proceedLogId){
-       ProceedingLog proceedingLog1=proceedingLogFindBYId(proceedLogId);
-       proceedingLog1.updateDeleted();
+    public void delProceedParticipant(Long participantId){
+        advanceParticipantRepository.delParticipant(participantId);
     }
 
 
@@ -114,22 +99,24 @@ public class AdvanceProceedingRepository {
                 .build();
         p=proceedingRepository.save(p);
         Long proceedId=p.getId();
-        List<ProceedingLog> proceedingLogList=requestProceedingCreate.getRequestProceedMemberDtos().stream().map(
+        List<Participant> participantList=requestProceedingCreate.getRequestProceedMemberDtos().stream().map(
                 x->{
-                    return ProceedingLog.builder()
-                            .proceedingId(proceedId)
+                    return Participant.builder()
+                            .targetId(proceedId)
                             .memberId(x.getMemberId())
+                            .participantType(ParticipantType.PROCEED)
                             .build();
                 }
         ).collect(Collectors.toList());
-        proceedingLogRepository.saveAll(proceedingLogList);
+        advanceParticipantRepository.saveAll(participantList);
 
-        List<ProceedMemberDto> proceedMemberDtos=requestProceedingCreate.getRequestProceedMemberDtos().stream()
+        List<ResponseParticipantMemberDto> proceedMemberDtos=requestProceedingCreate
+                .getRequestProceedMemberDtos().stream()
                 .map(x->{
-                    return ProceedMemberDto.builder()
-                            .proceedLogId(x.getMemberId())
+                    return ResponseParticipantMemberDto.builder()
                             .memberId(x.getMemberId())
                             .name(x.getName())
+                            .participantId(proceedId)
                             .build();
                 }).collect(Collectors.toList());
 
@@ -146,18 +133,19 @@ public class AdvanceProceedingRepository {
 
     public ProceedDto getProceeding(Long proceedId){
        Proceeding proceeding1=proceedingFindBYId(proceedId);
-       List<ProceedMemberDto> proceedMemberDtos=jpaQueryFactory.select(
+       List<ResponseParticipantMemberDto> proceedMemberDtos=jpaQueryFactory.select(
                        Projections.constructor(
-                               ProceedMemberDto.class,
-                               proceedingLog.id,
+                               ResponseParticipantMemberDto.class,
+                               participant.id,
                                member.id,
                                member.nickName
                        )
                )
-               .from(proceedingLog)
+               .from(participant)
                .join(member)
-               .on(member.id.eq(proceedingLog.memberId))
-               .where(proceedingLog.proceedingId.eq(proceedId).and(proceedingLog.deleted.isFalse()))
+               .on(member.id.eq(participant.memberId))
+               .where(participant.targetId.eq(proceedId).and(participant.deleted.isFalse())
+                       .and(participant.participantType.eq(ParticipantType.PROCEED)))
                .fetch();
 
        return  ProceedDto.builder()

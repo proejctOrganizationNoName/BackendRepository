@@ -1,10 +1,7 @@
-package com.project.demo.proceeding.domain;
+package com.project.demo.participant.domain;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,21 +9,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ProceedingLog {
-
+public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long proceedingId;
+    private Long targetId;
     private Long memberId;
     private Boolean deleted=false;
+    @Enumerated(EnumType.ORDINAL)
+    private ParticipantType participantType;
 
     @Builder
-    public ProceedingLog(Long proceedingId, Long memberId) {
-        this.proceedingId = proceedingId;
+    public Participant(Long targetId, Long memberId,ParticipantType participantType) {
+        this.targetId = targetId;
         this.memberId = memberId;
-
+        this.participantType=participantType;
     }
 
     public void updateDeleted(){

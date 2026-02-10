@@ -21,7 +21,7 @@ public class AdvanceParticipantRepository {
 
     private final ParticipantRepository participantRepository;
     private final JPAQueryFactory jpaQueryFactory;
-    private final EntityManager entityManager;
+
 
     public Participant findById(Long id){
         Optional<Participant> participant=participantRepository
@@ -54,8 +54,6 @@ public class AdvanceParticipantRepository {
                 .set(participant.deleted,true)
                 .execute();
 
-        entityManager.flush();
-        entityManager.clear();
     }
 
     public List<Participant> saveAll(List<Participant> participantList){

@@ -11,10 +11,10 @@ import com.project.demo.member.repository.MemberRepositoryAdvance;
 import com.project.demo.notify.Repository.NotifyRepository;
 import com.project.demo.notify.domain.Notify;
 import com.project.demo.notify.service.NotifyService;
+import com.project.demo.participant.domain.Participant;
+import com.project.demo.participant.domain.ParticipantType;
+import com.project.demo.participant.repository.ParticipantRepository;
 import com.project.demo.proceeding.domain.Proceeding;
-import com.project.demo.proceeding.domain.ProceedingLog;
-import com.project.demo.proceeding.repositroy.AdvanceProceedingRepository;
-import com.project.demo.proceeding.repositroy.ProceedingLogRepository;
 import com.project.demo.proceeding.repositroy.ProceedingRepository;
 import com.project.demo.proceeding.service.ProceedService;
 import com.project.demo.project.domain.Project;
@@ -24,8 +24,6 @@ import com.project.demo.project.service.ProjectService;
 import com.project.demo.redis.RedisUserInfoService;
 import com.project.demo.rule.domain.Agreement;
 import com.project.demo.rule.domain.Rule;
-import com.project.demo.rule.repository.AdvanceAgreementRepository;
-import com.project.demo.rule.repository.AdvanceRuleRepository;
 import com.project.demo.rule.repository.AgreementRepository;
 import com.project.demo.rule.repository.RuleRepository;
 import com.project.demo.rule.service.RuleAgreementService;
@@ -34,15 +32,12 @@ import com.project.demo.ticket.domain.TicketGrade;
 import com.project.demo.ticket.repository.AdvanceTicketRepository;
 import com.project.demo.ticket.repository.TicketRepository;
 import com.project.demo.ticket.service.TicketService;
-import com.project.demo.utility.CustomDateTimeFormat;
 import com.project.demo.utility.jwt.JwtUtility;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -61,7 +56,7 @@ public class IntegralTestEnv {
     protected ProceedingRepository proceedingRepository;
 
     @Autowired
-    protected ProceedingLogRepository proceedingLogRepository;
+    protected ParticipantRepository participantRepository;
 
     @Autowired
     protected RuleAgreementService ruleAgreementService;
@@ -126,7 +121,7 @@ public class IntegralTestEnv {
         ruleRepository.deleteAllInBatch();
         notifyRepository.deleteAllInBatch();
         proceedingRepository.deleteAllInBatch();
-        proceedingLogRepository.deleteAllInBatch();
+        participantRepository.deleteAllInBatch();
     }
 
     public Member createMember(Long idx){
@@ -213,12 +208,13 @@ public class IntegralTestEnv {
         return proceedingRepository.save(proceeding);
     }
 
-    public ProceedingLog createProceedingLog(Long proceedId,Long memberId){
-        ProceedingLog proceedingLog= ProceedingLog.builder()
-                .proceedingId(proceedId)
+    public Participant createParticipant(Long targetId, Long memberId, ParticipantType participantType){
+        Participant participant= Participant.builder()
+                .targetId(targetId)
                 .memberId(memberId)
+                .participantType(participantType)
                 .build();
-        return proceedingLogRepository.save(proceedingLog);
+        return participantRepository.save(participant);
     }
 
 }

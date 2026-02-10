@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static com.project.demo.member.domain.ResponseDtos.*;
 
 
@@ -80,6 +82,14 @@ public class MemberService {
                 .nickName(member.getNickName())
                 .imgUrl(member.getImgUrl())
                 .build();
+    }
+
+    public void delMember(Long memberId){
+       Optional<Member> memberOptional= memberRepository.findById(memberId);
+       if(memberOptional.isEmpty()||memberOptional.get().getDeleted()){
+           throw new CustomError("없는 회원입니다");
+       }
+       memberOptional.get().updateDeleted();
     }
 
 }

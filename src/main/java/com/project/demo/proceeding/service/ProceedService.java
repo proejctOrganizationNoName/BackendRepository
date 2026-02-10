@@ -1,17 +1,13 @@
 package com.project.demo.proceeding.service;
 
 
-import com.project.demo.proceeding.domain.ProceedingRequestDto;
-import com.project.demo.proceeding.domain.ProceedingResponseDto;
 import com.project.demo.proceeding.repositroy.AdvanceProceedingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
+import static com.project.demo.participant.domain.ParticipantResponseDto.*;
 import static com.project.demo.proceeding.domain.ProceedingRequestDto.*;
 import static com.project.demo.proceeding.domain.ProceedingResponseDto.*;
 
@@ -42,12 +38,12 @@ public class ProceedService {
         advanceProceedingRepository.delProceed(proceedId);
     }
 
-    public void delProceedLog(Long proceedLogId){
-        advanceProceedingRepository.delProceedLog(proceedLogId);
+    public void delProceedLog(Long participantId){
+        advanceProceedingRepository.delProceedParticipant(participantId);
     }
 
-    public ProceedMemberDto createProceedLog(Long proceedId,Long memberId,String name){
-        return advanceProceedingRepository.createNewProceedLog(proceedId,memberId,name);
+    public ResponseParticipantMemberDto createProceedLog(Long targetId, Long memberId, String name){
+        return advanceProceedingRepository.createNewProceedParticipant(targetId,memberId,name);
     }
 
 

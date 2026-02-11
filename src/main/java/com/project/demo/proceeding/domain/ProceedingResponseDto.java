@@ -33,18 +33,4 @@ public class ProceedingResponseDto {
             this.updateDate = updateDate;
         }
     }
-
-    @Getter
-    @NoArgsConstructor
-    public static final class ProceedMemberDto{
-        private Long proceedLogId;
-        private Long memberId;
-        private String name;
-        @Builder
-        public ProceedMemberDto(Long proceedLogId, Long memberId, String name) {
-            this.proceedLogId = proceedLogId;
-            this.memberId = memberId;
-            this.name = name;
-        }
-    }
 }

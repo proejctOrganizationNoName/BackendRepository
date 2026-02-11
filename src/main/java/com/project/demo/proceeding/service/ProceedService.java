@@ -37,14 +37,4 @@ public class ProceedService {
     public void delProceed(Long proceedId){
         advanceProceedingRepository.delProceed(proceedId);
     }
-
-    public void delProceedLog(Long participantId){
-        advanceProceedingRepository.delProceedParticipant(participantId);
-    }
-
-    public ResponseParticipantMemberDto createProceedLog(Long targetId, Long memberId, String name){
-        return advanceProceedingRepository.createNewProceedParticipant(targetId,memberId,name);
-    }
-
-
 }

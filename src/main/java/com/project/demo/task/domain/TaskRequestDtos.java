@@ -51,4 +51,25 @@ public class TaskRequestDtos {
             this.requestParticipantChanges = requestParticipantChanges;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public final static class RequestConditionSearch{
+        private Long memberId;
+        private String deadLine;
+        private String title;
+        private int offSet;
+
+        @Builder
+        public RequestConditionSearch(Long memberId, String deadLine, String title, int offSet) {
+            this.memberId = memberId;
+            this.deadLine = deadLine;
+            this.title=title;
+            this.offSet = offSet;
+        }
+
+        public int provideOffset(){
+            return this.offSet-1;
+        }
+    }
 }

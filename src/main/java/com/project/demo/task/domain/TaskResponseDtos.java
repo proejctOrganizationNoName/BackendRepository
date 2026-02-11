@@ -35,4 +35,23 @@ public class TaskResponseDtos {
             this.taskState=taskState;
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    public final static class SimpleTaskDto{
+        private Long taskId;
+        private String title;
+        private String deadLine;
+        private String createDate;
+        private TaskState taskState;
+
+        @Builder
+        public SimpleTaskDto(Long taskId, String title, String deadLine, String createDate, TaskState taskState) {
+            this.taskId = taskId;
+            this.title = title;
+            this.deadLine = deadLine;
+            this.createDate = createDate;
+            this.taskState = taskState;
+        }
+    }
 }

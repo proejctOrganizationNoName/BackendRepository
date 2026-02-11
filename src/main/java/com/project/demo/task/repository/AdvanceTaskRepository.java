@@ -10,9 +10,13 @@ import com.project.demo.participant.repository.AdvanceParticipantRepository;
 import com.project.demo.task.domain.QTask;
 import com.project.demo.task.domain.Task;
 import com.project.demo.utility.CustomDateTimeFormat;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -131,5 +135,70 @@ public class AdvanceTaskRepository {
                 .memberDtoList(data)
                 .taskState(task1.getTaskState())
                 .build();
+    }
+
+    public Page<SimpleTaskDto> conditionSearch(RequestConditionSearch requestConditionSearch){
+        PageRequest pageRequest=PageRequest.of(requestConditionSearch.provideOffset(),10);
+        if(requestConditionSearch.getMemberId()==null){
+            List<SimpleTaskDto> simpleTaskDto=jpaQueryFactory.select(Projections.constructor(SimpleTaskDto.class,
+                 task.id,
+                 task.title,
+                 task.deadLine.stringValue(),
+                 task.createDate.stringValue(),
+                 task.taskState
+                         ))
+                 .from(task)
+                 .where(conditionSearchBuilder(requestConditionSearch))
+                 .limit(pageRequest.getPageSize())
+                 .offset(pageRequest.getOffset())
+                 .fetch();
+            Long count=jpaQueryFactory.select(task.count())
+                 .from(task)
+                 .where(conditionSearchBuilder(requestConditionSearch))
+                 .fetch().getFirst();
+            return new PageImpl<>(simpleTaskDto,pageRequest,count);
+        }
+        else{
+            List<SimpleTaskDto> simpleTaskDto=jpaQueryFactory.select(Projections.constructor(SimpleTaskDto.class,
+                            task.id,
+                            task.title,
+                            task.deadLine.stringValue(),
+                            task.createDate.stringValue(),
+                            task.taskState
+                    ))
+                    .from(participant)
+                    .join(task)
+                    .on(task.id.eq(participant.targetId).and(participant.participantType.eq(ParticipantType.TASK)))
+                    .where(conditionSearchBuilder(requestConditionSearch))
+                    .limit(pageRequest.getPageSize())
+                    .offset(pageRequest.getOffset())
+                    .fetch();
+            Long count=jpaQueryFactory.select(task.count())
+                    .from(participant)
+                    .join(task)
+                    .on(task.id.eq(participant.targetId).and(participant.participantType.eq(ParticipantType.TASK)))
+                    .where(conditionSearchBuilder(requestConditionSearch))
+                    .fetch().getFirst();
+            return new PageImpl<>(simpleTaskDto,pageRequest,count);
+        }
+    }
+
+    private BooleanBuilder conditionSearchBuilder(RequestConditionSearch requestConditionSearch){
+
+        BooleanBuilder booleanBuilder=new BooleanBuilder();
+
+        if(requestConditionSearch.getDeadLine()!=null){
+            booleanBuilder.and(task.deadLine.after(
+                    CustomDateTimeFormat
+                            .parseClientTimetoServerFormat(requestConditionSearch.getDeadLine())));
+        }
+        if(requestConditionSearch.getTitle()!=null){
+            booleanBuilder.and(task.title.like(requestConditionSearch.getTitle()+"%"));
+        }
+        if(requestConditionSearch.getMemberId()!=null){
+            booleanBuilder.and(participant.memberId.eq(requestConditionSearch.getMemberId()));
+        }
+        return booleanBuilder;
+
     }
 }

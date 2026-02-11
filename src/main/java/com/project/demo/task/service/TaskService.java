@@ -5,6 +5,7 @@ import com.project.demo.task.domain.TaskRequestDtos;
 import com.project.demo.task.domain.TaskResponseDtos;
 import com.project.demo.task.repository.AdvanceTaskRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,5 +30,9 @@ public class TaskService {
     }
     public void delTask(Long taskId){
         advanceTaskRepository.delTask(taskId);
+    }
+
+    public Page<SimpleTaskDto> getTaskDtos(RequestConditionSearch requestConditionSearch){
+        return advanceTaskRepository.conditionSearch(requestConditionSearch);
     }
 }

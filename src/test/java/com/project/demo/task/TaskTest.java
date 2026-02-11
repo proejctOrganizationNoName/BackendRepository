@@ -12,9 +12,11 @@ import com.project.demo.task.domain.TaskResponseDtos;
 import com.project.demo.task.domain.TaskState;
 import com.project.demo.utility.CustomDateTimeFormat;
 
+import org.assertj.core.api.AbstractIntegerAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,14 +32,17 @@ public class TaskTest extends IntegralTestEnv {
     Task task;
     Participant participant;
 
+    Task task2;
     Member m;
 
 
     @BeforeEach
     void setting(){
         task=createTask(1L,"test","test",LocalDateTime.now());
-        participant=createParticipant(task.getId(),1L,ParticipantType.TASK);
         m=createMember(0L);
+        participant=createParticipant(task.getId(),m.getId(),ParticipantType.TASK);
+
+        task2=createTask(1L,"test2","test2",LocalDateTime.now());
     }
 
 
@@ -102,5 +107,41 @@ public class TaskTest extends IntegralTestEnv {
 
         assertThatThrownBy(()->taskService.getTask(task.getId()))
                 .hasMessage("없는 TASK 입니다");
+    }
+
+    @Test
+    @DisplayName("태스크 조건부 검색 테스트")
+    void taskConditionSearchTest(){
+        RequestConditionSearch requestConditionSearch=RequestConditionSearch.builder()
+                .offSet(1)
+                .title("test")
+                .build();
+        Page<SimpleTaskDto> simpleTaskDtoPage=taskService.getTaskDtos(requestConditionSearch);
+        assertThat(simpleTaskDtoPage.getContent().size()).isEqualTo(2);
+
+        RequestConditionSearch requestConditionSearch1=RequestConditionSearch.builder()
+                .offSet(1)
+                .deadLine(CustomDateTimeFormat.parseServerTimeToClientFormat(LocalDateTime.now()))
+                .build();
+        Page<SimpleTaskDto> simpleTaskDtoPage1=taskService.getTaskDtos(requestConditionSearch1);
+        assertThat(simpleTaskDtoPage1.getContent().size()).isEqualTo(0);
+
+        RequestConditionSearch requestConditionSearch2=RequestConditionSearch.builder()
+                .offSet(1)
+                .memberId(m.getId())
+                .build();
+        Page<SimpleTaskDto> simpleTaskDtoPage2=taskService.getTaskDtos(requestConditionSearch2);
+        assertThat(simpleTaskDtoPage2.getContent().size()).isEqualTo(1);
+        assertThat(simpleTaskDtoPage.getContent().getFirst().getTaskId()).isEqualTo(task.getId());
+
+
+        RequestConditionSearch requestConditionSearch3=RequestConditionSearch.builder()
+                .offSet(1)
+                .memberId(m.getId())
+                .title("2")
+                .build();
+        Page<SimpleTaskDto> simpleTaskDtoPage3=taskService.getTaskDtos(requestConditionSearch3);
+        assertThat(simpleTaskDtoPage3.getContent().size()).isEqualTo(0);
+
     }
 }

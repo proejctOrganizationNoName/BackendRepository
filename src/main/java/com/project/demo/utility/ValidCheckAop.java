@@ -23,11 +23,11 @@ public class ValidCheckAop {
 
     private final TaskRepository taskRepository;
 
-    @Before("@annotation(UpdateValid)")
-    public void validateDeleteOrDeadLine(JoinPoint joinPoint, ValidAnnotation updateValid){
+    @Before("@annotation(ValidAnnotation)")
+    public void validateDeleteOrDeadLine(JoinPoint joinPoint, ValidAnnotation validAnnotation){
 
         Object [] objectList=joinPoint.getArgs();
-        switch (updateValid.type()){
+        switch (validAnnotation.type()){
             default -> {
                 Long id=getId(objectList);
                 Optional<Task> task=taskRepository.findById(id);

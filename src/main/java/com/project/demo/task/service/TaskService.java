@@ -1,9 +1,9 @@
 package com.project.demo.task.service;
 
 
-import com.project.demo.task.domain.TaskRequestDtos;
-import com.project.demo.task.domain.TaskResponseDtos;
 import com.project.demo.task.repository.AdvanceTaskRepository;
+import com.project.demo.utility.ClassCheck;
+import com.project.demo.utility.ValidAnnotation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ public class TaskService {
     public TaskDto createTask(RequestCreateTask requestCreateTask){
         return advanceTaskRepository.createTask(requestCreateTask);
     }
+    @ValidAnnotation(type = ClassCheck.TASK)
     public void updateTask(RequestUpdateTask requestUpdateTask){
         advanceTaskRepository.updateTask(requestUpdateTask);
     }

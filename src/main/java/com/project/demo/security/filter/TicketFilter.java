@@ -49,6 +49,10 @@ public class TicketFilter extends OncePerRequestFilter {
         return !request.getRequestURI().startsWith("/ticket");
     }
 
+    /*
+    * 해당 필터에서는 project단위의 deadline을 체크해서 ticket으로 수정 경로 접근시 차단하는 역할부여.
+    * task별 마감 시간 체크는 jpa 단위에서 entitiylistener로 체크.
+    * */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 

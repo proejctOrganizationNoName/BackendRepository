@@ -24,7 +24,6 @@ public class Task extends BaseTime {
     private LocalDateTime deadLine;
     @Enumerated(EnumType.STRING)
     private TaskState taskState=TaskState.START;
-
     @Builder
     public Task(Long projectId, String title, String content, LocalDateTime deadLine) {
         this.projectId = projectId;
@@ -48,5 +47,7 @@ public class Task extends BaseTime {
     public void updateTitle(String title){
         this.title=title;
     }
+
+
 }
 

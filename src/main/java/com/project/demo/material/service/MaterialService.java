@@ -4,10 +4,13 @@ package com.project.demo.material.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.project.demo.excpetion.CustomError;
 import com.project.demo.material.domain.Material;
 import com.project.demo.material.domain.MaterialType;
 import com.project.demo.material.domain.ResponseMaterialDto;
 import com.project.demo.material.repository.AdvanceMaterialRepository;
+import com.project.demo.utility.ClassCheck;
+import com.project.demo.utility.ValidAnnotation;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,17 +35,37 @@ public class MaterialService {
     private final AmazonS3 amazonS3;
     private final AdvanceMaterialRepository advanceMaterialRepository;
 
-   public MaterialDto checkFile(MultipartFile file, RequestSaveMaterial requestSaveMaterial){
+
+    @ValidAnnotation(type = ClassCheck.TASK)
+    public MaterialDto createMaterial(RequestSaveMaterial requestSaveMaterial){
+        Material material=Material.builder()
+                .materialType(MaterialType.LINK)
+                .title(requestSaveMaterial.getText())
+                .memberId(requestSaveMaterial.getMemberId())
+                .taskId(requestSaveMaterial.getTaskId())
+                .build();
+        material=advanceMaterialRepository.saveMaterial(material);
+        MaterialDto materialDto= MaterialDto.builder()
+                .materialType(material.getMaterialType())
+                .materialId(material.getId())
+                .getUrl(material.getKey())
+                .build();
+        return materialDto;
+    }
+    @ValidAnnotation(type = ClassCheck.TASK)
+   public MaterialDto createMaterial(MultipartFile file, RequestSaveMaterial requestSaveMaterial){
 
        MaterialType fileType;
-
        try (InputStream is = file.getInputStream()) {
            String mimeType = tika.detect(is);
            fileType=MaterialType.findByMimeType(mimeType);
-       } catch (IOException e) {
+           if(!fileType.getMimeType().equals(mimeType)){
+               throw new CustomError(" 파일과 타입 미일치");
+           }
+       }
+       catch (IOException e) {
            throw new RuntimeException(e);
        }
-
        ObjectMetadata metadata = new ObjectMetadata();
        metadata.setContentType(fileType.getMimeType());
        metadata.setContentLength(file.getSize());

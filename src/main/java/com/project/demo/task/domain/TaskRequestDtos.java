@@ -1,6 +1,6 @@
 package com.project.demo.task.domain;
 
-import com.project.demo.participant.domain.ParticipantRequestDto;
+import com.project.demo.utility.ValidInterface;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +33,7 @@ public class TaskRequestDtos {
 
     @Getter
     @NoArgsConstructor
-    public final static class RequestUpdateTask{
+    public final static class RequestUpdateTask implements ValidInterface {
         private Long taskId;
         private String title;
         private String content;
@@ -49,6 +49,11 @@ public class TaskRequestDtos {
             this.deadLine = deadLine;
             this.taskState = taskState;
             this.requestParticipantChanges = requestParticipantChanges;
+        }
+
+        @Override
+        public Long provideId() {
+            return this.taskId;
         }
     }
 

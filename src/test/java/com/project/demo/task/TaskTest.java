@@ -38,11 +38,13 @@ public class TaskTest extends IntegralTestEnv {
 
     @BeforeEach
     void setting(){
-        task=createTask(1L,"test","test",LocalDateTime.now());
+
+        LocalDateTime now=LocalDateTime.now().plusMinutes(10L);
+        task=createTask(1L,"test","test",now);
         m=createMember(0L);
         participant=createParticipant(task.getId(),m.getId(),ParticipantType.TASK);
 
-        task2=createTask(1L,"test2","test2",LocalDateTime.now());
+        task2=createTask(1L,"test2","test2",now);
     }
 
 

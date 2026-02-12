@@ -1,6 +1,8 @@
 package com.project.demo.project.domain;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class ResponseDtos {
 
@@ -18,6 +20,20 @@ public class ResponseDtos {
             this.inviteCode = inviteCode;
             this.deadLine = deadLine;
             this.createDate=createDate;
+        }
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    public static final class SimpleProjectDto{
+        private Long id;
+        private String projectName;
+
+        @Builder
+        public SimpleProjectDto(Long id, String projectName) {
+            this.id = id;
+            this.projectName = projectName;
         }
     }
 }

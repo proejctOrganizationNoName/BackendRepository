@@ -38,7 +38,7 @@ public class TaskTest extends IntegralTestEnv {
 
     @BeforeEach
     void setting(){
-        LocalDateTime now=LocalDateTime.now();
+        LocalDateTime now=LocalDateTime.now().plusMinutes(5L);
         task=createTask(1L,"test","test",now);
         m=createMember(0L);
         participant=createParticipant(task.getId(),m.getId(),ParticipantType.TASK);
@@ -125,7 +125,7 @@ public class TaskTest extends IntegralTestEnv {
                 .deadLine(CustomDateTimeFormat.parseServerTimeToClientFormat(LocalDateTime.now()))
                 .build();
         Page<SimpleTaskDto> simpleTaskDtoPage1=taskService.getTaskDtos(requestConditionSearch1);
-        assertThat(simpleTaskDtoPage1.getContent().size()).isEqualTo(0);
+        assertThat(simpleTaskDtoPage1.getContent().size()).isEqualTo(2);
 
         RequestConditionSearch requestConditionSearch2=RequestConditionSearch.builder()
                 .offSet(1)

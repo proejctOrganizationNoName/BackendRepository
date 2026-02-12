@@ -1,15 +1,12 @@
 package com.project.demo.rule.service;
 
 
-import com.nimbusds.oauth2.sdk.AbstractOptionallyAuthenticatedRequest;
 import com.project.demo.excpetion.CustomError;
 import com.project.demo.rule.domain.Agreement;
 import com.project.demo.rule.domain.Rule;
-import com.project.demo.rule.domain.RuleAgreementRespones;
 import com.project.demo.rule.repository.AdvanceAgreementRepository;
 import com.project.demo.rule.repository.AdvanceRuleRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.jaxb.mapping.spi.JaxbGenericIdGeneratorImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

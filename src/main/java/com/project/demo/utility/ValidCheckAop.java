@@ -23,7 +23,7 @@ public class ValidCheckAop {
 
     private final TaskRepository taskRepository;
 
-    @Before("@annotation(ValidAnnotation)")
+    @Before("@annotation(validAnnotation)")
     public void validateDeleteOrDeadLine(JoinPoint joinPoint, ValidAnnotation validAnnotation){
 
         Object [] objectList=joinPoint.getArgs();

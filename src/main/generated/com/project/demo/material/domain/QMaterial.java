@@ -21,6 +21,8 @@ public class QMaterial extends EntityPathBase<Material> {
 
     public final com.project.demo.utility.QBaseTime _super = new com.project.demo.utility.QBaseTime(this);
 
+    public final EnumPath<com.project.demo.utility.ClassCheck> classCheck = createEnum("classCheck", com.project.demo.utility.ClassCheck.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
@@ -34,7 +36,7 @@ public class QMaterial extends EntityPathBase<Material> {
 
     public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
 
-    public final NumberPath<Long> taskId = createNumber("taskId", Long.class);
+    public final NumberPath<Long> refId = createNumber("refId", Long.class);
 
     public final StringPath title = createString("title");
 

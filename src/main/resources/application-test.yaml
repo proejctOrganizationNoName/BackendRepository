@@ -91,3 +91,7 @@ spring:
 jwt:
   issuer: test
   secret-key: sfsdffssfsd
+
+img:
+  project: "test"
+  member: "test"

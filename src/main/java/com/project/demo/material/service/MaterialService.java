@@ -11,6 +11,7 @@ import com.project.demo.material.domain.ResponseMaterialDto;
 import com.project.demo.material.repository.AdvanceMaterialRepository;
 import com.project.demo.utility.ClassCheck;
 import com.project.demo.utility.ValidAnnotation;
+import com.querydsl.codegen.utils.model.ClassType;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,14 +36,38 @@ public class MaterialService {
     private final AmazonS3 amazonS3;
     private final AdvanceMaterialRepository advanceMaterialRepository;
 
+    public String updateImgUrl(MultipartFile file,RequestSimpleImgUpdate requestSimpleImgUpdate){
 
+        validMaterialType(file,requestSimpleImgUpdate.getMaterialType());
+        ObjectMetadata metadata = new ObjectMetadata();
+        String key=createMetaData(metadata,requestSimpleImgUpdate.getMaterialType(),file);
+
+        try (InputStream uploadStream = file.getInputStream()) {
+            amazonS3.putObject(bucket, key, uploadStream, metadata);
+        } catch (IOException e) {
+            throw new RuntimeException("업로드 실패", e);
+        }
+
+        Material material=Material.builder()
+                .materialType(requestSimpleImgUpdate.getMaterialType())
+                .key(key)
+                .title(file.getOriginalFilename())
+                .refId(requestSimpleImgUpdate.getRefId())
+                .classCheck(requestSimpleImgUpdate.getClassCheck())
+                .build();
+
+        material=advanceMaterialRepository.saveMaterial(material);
+
+        return material.getKey();
+    }
     @ValidAnnotation(type = ClassCheck.TASK)
     public MaterialDto createMaterial(RequestSaveMaterial requestSaveMaterial){
         Material material=Material.builder()
                 .materialType(MaterialType.LINK)
                 .title(requestSaveMaterial.getText())
                 .memberId(requestSaveMaterial.getMemberId())
-                .taskId(requestSaveMaterial.getTaskId())
+                .refId(requestSaveMaterial.getTaskId())
+                .classCheck(ClassCheck.TASK)
                 .build();
         material=advanceMaterialRepository.saveMaterial(material);
         MaterialDto materialDto= MaterialDto.builder()
@@ -55,21 +80,9 @@ public class MaterialService {
     @ValidAnnotation(type = ClassCheck.TASK)
    public MaterialDto createMaterial(MultipartFile file, RequestSaveMaterial requestSaveMaterial){
 
-       MaterialType fileType;
-       try (InputStream is = file.getInputStream()) {
-           String mimeType = tika.detect(is);
-           fileType=MaterialType.findByMimeType(mimeType);
-           if(!fileType.getMimeType().equals(mimeType)){
-               throw new CustomError(" 파일과 타입 미일치");
-           }
-       }
-       catch (IOException e) {
-           throw new RuntimeException(e);
-       }
-       ObjectMetadata metadata = new ObjectMetadata();
-       metadata.setContentType(fileType.getMimeType());
-       metadata.setContentLength(file.getSize());
-       String key=fileType.getMimeType()+"/"+UUID.randomUUID().toString()+"-"+file.getOriginalFilename();
+        validMaterialType(file,requestSaveMaterial.getMaterialType());
+        ObjectMetadata metadata = new ObjectMetadata();
+        String key=createMetaData(metadata,requestSaveMaterial.getMaterialType(),file);
 
        try (InputStream uploadStream = file.getInputStream()) {
           amazonS3.putObject(bucket, key, uploadStream, metadata);
@@ -78,11 +91,12 @@ public class MaterialService {
        }
 
        Material material=Material.builder()
-               .materialType(fileType)
+               .materialType(requestSaveMaterial.getMaterialType())
                .key(key)
                .title(file.getOriginalFilename())
                .memberId(requestSaveMaterial.getMemberId())
-               .taskId(requestSaveMaterial.getTaskId())
+               .refId(requestSaveMaterial.getTaskId())
+               .classCheck(ClassCheck.TASK)
                .build();
 
        material=advanceMaterialRepository.saveMaterial(material);
@@ -121,5 +135,29 @@ public class MaterialService {
         ,bucket,amazonS3);
    }
 
+   private void validMaterialType(MultipartFile file,MaterialType materialType){
+       MaterialType fileType;
+       try (InputStream is = file.getInputStream()) {
+           String mimeType = tika.detect(is);
+           fileType=MaterialType.findByMimeType(mimeType);
+           if(!fileType.getMimeType().equals(materialType)){
+               throw new CustomError(" 파일과 타입 미일치");
+           }
+       }
+       catch (IOException e) {
+           throw new RuntimeException(e);
+       }
+   }
+   private String createMetaData(ObjectMetadata metadata,MaterialType materialType,MultipartFile file){
+       metadata.setContentType(materialType.getMimeType());
+       metadata.setContentLength(file.getSize());
+       String key=materialType.getMimeType()+"/"+UUID.randomUUID().toString()+"-"+file.getOriginalFilename();
 
+       try (InputStream uploadStream = file.getInputStream()) {
+           amazonS3.putObject(bucket, key, uploadStream, metadata);
+       } catch (IOException e) {
+           throw new RuntimeException("업로드 실패", e);
+       }
+       return key;
+   }
 }

@@ -37,11 +37,6 @@ public class AdvanceProjectRepo {
         }
         return p.get();
     }
-    public String createNewInviteCode(Long id){
-        Project p=findProjectById(id);
-        p.updateInviteCode();
-        return p.getInviteCode();
-    }
     public void delProject(Long id){
         Project p=findProjectById(id);
         p.updateDeleted();
@@ -54,13 +49,17 @@ public class AdvanceProjectRepo {
         if(requestUpdateProjectDto.getProjectName()!=null){
             p.updateProjectName(requestUpdateProjectDto.getProjectName());
         }
+        if(requestUpdateProjectDto.getImgUrl()!=null){
+            p.updateImgUrl(requestUpdateProjectDto.getImgUrl());
+        }
     }
 
     public List<SimpleProjectDto> getProjectList(Long memberId){
         return jpaQueryFactory.select(
                         Projections.constructor(SimpleProjectDto.class,
                                 project.id,
-                                project.projectName
+                                project.projectName,
+                                project.imgUrl
                                 ))
                 .from(ticket)
                 .join(project)

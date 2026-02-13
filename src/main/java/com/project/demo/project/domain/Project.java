@@ -27,12 +27,13 @@ public class Project extends BaseTime {
     private LocalDateTime deadLine;
     private String inviteCode;
     private Boolean deleted=false;
-
+    private String imgUrl;
     @Builder
-    public Project(String projectName, LocalDateTime deadLine, String inviteCode) {
+    public Project(String projectName, LocalDateTime deadLine, String inviteCode, String imgUrl) {
         this.projectName = projectName;
         this.deadLine = deadLine;
         this.inviteCode = inviteCode;
+        this.imgUrl = imgUrl;
     }
 
     public void updateDeleted(){
@@ -47,7 +48,7 @@ public class Project extends BaseTime {
         this.deadLine= CustomDateTimeFormat.parseClientTimetoServerFormat(deadLine);
     }
 
-    public void updateInviteCode(){
-        this.inviteCode= UUID.randomUUID().toString();
+    public void updateImgUrl(String url){
+        this.imgUrl=url;
     }
 }

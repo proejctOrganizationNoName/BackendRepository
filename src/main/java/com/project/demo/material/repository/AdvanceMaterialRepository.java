@@ -7,6 +7,7 @@ import com.project.demo.material.domain.Material;
 import com.project.demo.material.domain.QMaterial;
 import com.project.demo.material.domain.RequestMaterialDto;
 import com.project.demo.material.domain.ResponseMaterialDto;
+import com.project.demo.utility.ClassCheck;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -57,7 +58,7 @@ public class AdvanceMaterialRepository {
                         )
                 )
                 .from(material)
-                .where(conditionSearch(requestConditionSearchMaterial))
+                .where(conditionSearch(requestConditionSearchMaterial).and(material.classCheck.eq(ClassCheck.TASK)))
                 .offset(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .orderBy(material.createDate.desc())
@@ -66,7 +67,7 @@ public class AdvanceMaterialRepository {
                     material.count()
                 )
                 .from(material)
-                .where(conditionSearch(requestConditionSearchMaterial))
+                .where(conditionSearch(requestConditionSearchMaterial).and(material.classCheck.eq(ClassCheck.TASK)))
                 .orderBy(material.createDate.desc())
                 .fetch().getFirst();
 
@@ -83,7 +84,7 @@ public class AdvanceMaterialRepository {
             booleanBuilder.and(material.materialType.eq(requestConditionSearchMaterial.getMaterialType()));
         }
         if(requestConditionSearchMaterial.getTaskId()!=null){
-            booleanBuilder.and(material.taskId.eq(material.taskId));
+            booleanBuilder.and(material.refId.eq(requestConditionSearchMaterial.getTaskId()));
         }
         return booleanBuilder;
     }

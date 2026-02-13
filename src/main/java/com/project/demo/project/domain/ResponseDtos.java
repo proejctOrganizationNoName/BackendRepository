@@ -29,11 +29,13 @@ public class ResponseDtos {
     public static final class SimpleProjectDto{
         private Long id;
         private String projectName;
+        private String imgUrl;
 
         @Builder
-        public SimpleProjectDto(Long id, String projectName) {
+        public SimpleProjectDto(Long id, String projectName,String imgUrl) {
             this.id = id;
             this.projectName = projectName;
+            this.imgUrl=imgUrl;
         }
     }
 }

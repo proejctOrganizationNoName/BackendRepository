@@ -9,6 +9,7 @@ import com.project.demo.project.domain.ResponseDtos;
 import com.project.demo.project.repository.AdvanceProjectRepo;
 import com.project.demo.utility.CustomDateTimeFormat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,8 @@ public class ProjectService {
 
     private final AdvanceProjectRepo advanceProjectRepo;
     private final SecurityMemberReadService securityMemberReadService;
+    @Value("${img.project}")
+    private String imgUrl;
 
     public void createProject(RequestCreateProjectDto requestCreateProjectDto){
         LocalDateTime deadLine= CustomDateTimeFormat.parseClientTimetoServerFormat(
@@ -35,6 +38,7 @@ public class ProjectService {
                 .deadLine(deadLine)
                 .projectName(requestCreateProjectDto.getProjectName())
                 .inviteCode(UUID.randomUUID().toString())
+                .imgUrl(requestCreateProjectDto.getImgUrl()==null ? imgUrl: requestCreateProjectDto.getImgUrl())
                 .build();
         advanceProjectRepo.createProject(p);
     }
@@ -42,6 +46,7 @@ public class ProjectService {
         advanceProjectRepo.delProject(projectId);
     }
     public void updateProject(RequestUpdateProjectDto requestUpdateProjectDto){
+            if(requestUpdateProjectDto.getImgUrl())
             advanceProjectRepo.updateProject(requestUpdateProjectDto);
     }
 

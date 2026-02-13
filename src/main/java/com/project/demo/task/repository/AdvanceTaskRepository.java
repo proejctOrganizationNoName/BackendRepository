@@ -14,6 +14,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ import static com.project.demo.task.domain.TaskResponseDtos.*;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class AdvanceTaskRepository {
     private final TaskRepository taskRepository;
     private final AdvanceParticipantRepository advanceParticipantRepository;

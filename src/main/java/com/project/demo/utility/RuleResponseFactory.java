@@ -3,7 +3,6 @@ package com.project.demo.utility;
 import com.project.demo.rule.domain.Rule;
 import com.project.demo.rule.repository.AdvanceRuleRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
@@ -22,11 +21,13 @@ public class RuleResponseFactory implements ResponseBodyAdvice {
     public boolean supports(MethodParameter returnType, Class converterType) {
         return true;
     }
-    @Nullable
-    @Override
-    public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
 
-        if(response.getHeaders().containsHeader("needAgree")){
+
+
+    @Override
+    public Object beforeBodyWrite( Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+
+        if(response.getHeaders().containsKey("needAgree")){
             if (body instanceof ApiResponseCreator) {
 
                 // 헤더 값 추출
@@ -35,9 +36,9 @@ public class RuleResponseFactory implements ResponseBodyAdvice {
                     Long ruleId = Long.parseLong(headerValue);
                     Rule rule = advanceRuleRepository.findByProjectId(ruleId);
                     RuleDto ruleDto = RuleDto.builder()
-                                .content(rule.getContent())
-                                .ruleId(rule.getRuleId())
-                                .build();
+                            .content(rule.getContent())
+                            .ruleId(rule.getRuleId())
+                            .build();
                     ApiResponseCreator data = (ApiResponseCreator) body;
                     data.updateRuleDto(ruleDto);
                 }

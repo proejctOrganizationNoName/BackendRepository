@@ -92,10 +92,9 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(){
-        DaoAuthenticationProvider provider=new DaoAuthenticationProvider(
-                new CustomUserDetailService(memberRepository)
-        );
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(new CustomUserDetailService(memberRepository));
         return new ProviderManager(provider);
     }
 
